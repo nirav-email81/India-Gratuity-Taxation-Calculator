@@ -163,12 +163,29 @@
     .chip.sel { border-color: #1a237e; background: #e8eaf6; }
     .rate-badge { font-weight: 700; color: #d32f2f; }
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 4px; }
-    .table-wrap table { margin-top: 6px; min-width: 560px; }
+    .table-wrap table { margin-top: 6px; min-width: 700px; }
     .surcharge {
       margin-top: 10px; padding: 10px 14px; background: #fdecea;
       border-left: 4px solid #d32f2f; border-radius: 6px; font-size: .8rem; color: #b71c1c; line-height: 1.6;
     }
     .surcharge strong { color: #7f0000; }
+    .stat-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+    .stat-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px 12px; }
+    .stat-item .stat-label { font-size: .7rem; color: #777; text-transform: uppercase; font-weight: 700; letter-spacing: .3px; }
+    .stat-item .stat-value { font-size: 1rem; font-weight: 700; color: #1a237e; margin-top: 3px; }
+    .stat-item.total { background: #fff9c4; border-color: #f9a825; }
+    .stat-item.total .stat-value { color: #bf360c; }
+    .stat-item.inhand { background: #e8f5e9; border-color: #2e7d32; }
+    .stat-item.inhand .stat-value { color: #1b5e20; }
+    @media (max-width: 640px) {
+      .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .stat-item { padding: 8px 10px; }
+      .stat-item .stat-label { font-size: .6rem; }
+      .stat-item .stat-value { font-size: .9rem; }
+    }
+    @media (max-width: 380px) {
+      .stat-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 640px) {
       body { padding: 10px; }
       .card { padding: 22px 16px; border-radius: 16px; margin: 6px auto; }
@@ -345,7 +362,7 @@
 
       <div id="taxBox">
         <p style="font-weight:700;font-size:.9rem;margin-top:12px" id="taxHeadline"></p>
-        <div class="table-wrap"><table class="table" id="taxTable"></table></div>
+        <div id="taxTable" class="stat-grid"></div>
         <div class="surcharge" id="surchargeBox"></div>
         <div class="tax-note" id="taxNote"></div>
       </div>
@@ -649,36 +666,25 @@
         surBox.innerHTML = '';
         taxNote.innerHTML = 'No tax is deducted on gratuity for government employees.';
       } else {
-        taxHeadline.innerHTML = `Your gratuity is <span class="rate-badge">${fmt(gratuity)}</span>. Tax applies only above your remaining exemption.`;
-        taxTable.innerHTML = `
-          <thead>
-            <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Rate / Top Bracket</th><th>Tax on Gratuity</th><th>In-hand</th></tr>
-          </thead>
-          <tbody>
-            <tr class="highlight">
-              <td>${fmt(gratuity)}</td>
-              <td>${fmt(prior)}</td>
-              <td>${fmt(exemptAvail)}</td>
-              <td>${fmt(taxableExcess)}</td>
-              <td>${fmtRate(topRate)}</td>
-              <td>${fmt(tax)}</td>
-              <td>${fmt(inHand)}</td>
-            </tr>
-          </tbody>
-        `;
+        taxHeadline.innerHTML = `Your gratuity is <span class="rate-badge">${fmt(gratuity)}</span>. Tax applies only above your remaining exemption — ${fmt(exemptAvail)} is tax-free.`;
+        taxTable.innerHTML =
+          `<div class="stat-item"><div class="stat-label">Current Gratuity</div><div class="stat-value">${fmt(gratuity)}</div></div>
+          <div class="stat-item"><div class="stat-label">Prior Gratuity</div><div class="stat-value">${fmt(prior)}</div></div>
+          <div class="stat-item"><div class="stat-label">Exempt Available</div><div class="stat-value">${fmt(exemptAvail)}</div></div>
+          <div class="stat-item"><div class="stat-label">Taxable Excess</div><div class="stat-value">${fmt(taxableExcess)}</div></div>
+          <div class="stat-item"><div class="stat-label">Rate / Top Bracket</div><div class="stat-value">${fmtRate(topRate)}</div></div>
+          <div class="stat-item"><div class="stat-label">Income Tax</div><div class="stat-value">${fmt(tax)}</div></div>
+          <div class="stat-item"><div class="stat-label">Surcharge</div><div class="stat-value">${fmt(surTax)}</div></div>
+          <div class="stat-item total"><div class="stat-label">Total Tax (incl. surcharge)</div><div class="stat-value">${fmt(grossTax)}</div></div>
+          <div class="stat-item inhand"><div class="stat-label">In-hand</div><div class="stat-value">${fmt(inHand)}</div></div>`;
 
         if (taxableExcess === 0) {
-          surBox.innerHTML = `No taxable excess — nothing to surcharge. Your gratuity is within the ₹20,00,000 lifetime exemption.`;
+          surBox.innerHTML = `No surcharge — your gratuity is within the ₹20,00,000 lifetime exemption and nothing is taxable.`;
         } else if (!surSlab) {
           surBox.innerHTML = `No surcharge — your total income (${fmt(totalIncome)}) is at or below ₹50,00,000.`;
         } else {
           surBox.innerHTML =
-            `<strong>Surcharge on income-tax (${regime === 'new' ? 'new regime' : 'old regime'})</strong><br>
-            Total income used: annual income (${fmt(income)}) + taxable gratuity excess (${fmt(taxableExcess)}) = <strong>${fmt(totalIncome)}</strong><br>
-            Income crosses the ₹${surSlab.threshold.toLocaleString('en-IN')} mark → surcharge rate <strong>${surRate}%</strong> on the income-tax<br>
-            Surcharge on gratuity tax = <strong>${fmt(surTax)}</strong>${surRelief > 0 ? ` <span style="color:#7f0000">(marginal relief of ${fmt(surRelief)} applied near the threshold)</span>` : ''}<br>
-            <strong>Total tax on gratuity = ${fmt(grossTax)}</strong> (includes surcharge) <br>
-            <strong>Final in-hand = ${fmt(inHand)}</strong><br>
+            `<strong>Surcharge of ${surRate}% applied</strong> — your total income of <strong>${fmt(totalIncome)}</strong> (payout-year income ${fmt(income)} + taxable gratuity excess ${fmt(taxableExcess)}) crosses the ₹${surSlab.threshold.toLocaleString('en-IN')} mark. The surcharge is a % of the income-tax shown above.${surRelief > 0 ? `<br><em style="color:#7f0000">Marginal relief of ${fmt(surRelief)} applied near the threshold so you are not overtaxed.</em>` : ''}<br>
             <span style="font-size:.72rem">The 4% health &amp; education cess is not included.</span>`;
         }
 
