@@ -353,7 +353,7 @@
       </div>
     </div>
 
-    <div id="error" class="error">Please enter valid positive numbers in all fields.</div>
+    <div id="error" class="error"></div>
 
     <button onclick="calculate()">Calculate Gratuity &amp; Tax</button>
 
@@ -589,7 +589,17 @@
 
       const errorEl = document.getElementById('error');
       const resultEl = document.getElementById('result');
-      if (isNaN(serviceRaw) || serviceRaw <= 0 || base <= 0) {
+      if (isNaN(serviceRaw) || serviceRaw <= 0) {
+        errorEl.textContent = 'Please enter your years of service (a number greater than 0).';
+        errorEl.style.display = 'block';
+        resultEl.classList.remove('visible');
+        return;
+      }
+      if (base <= 0) {
+        const wageModeForErr = document.querySelector('input[name="wageMode"]:checked').value;
+        errorEl.textContent = wageModeForErr === 'mode3'
+          ? 'Please enter your annual CTC or a positive last-drawn basic wage. Zero is fine for DA, allowances and the other optional fields.'
+          : 'Please enter your last-drawn basic wages. Zero is fine for DA, allowances and the other optional fields.';
         errorEl.style.display = 'block';
         resultEl.classList.remove('visible');
         return;
