@@ -1,0 +1,58 @@
+Original: Build a gratuity calculator webpage. Ask for last drawn basic salary, DA,
+and total years of service. Use the Payment of Gratuity Act, 1972 formula
+(Basic + DA) x 15 x Years / 26. Round service up if > 6 months, down otherwise.
+Return gratuity in INR with a step-by-step breakdown and taxability note.
+
+Later requests:
+- Add eligibility notes at the end of the page (5-year rule, death/disablement
+  waiver, Labour Code 2025 fixed-term 1-year pro-rata, 10+ employee threshold,
+  payable scenarios).
+- Prepare prompt.txt, a small design document, and a README with sample test values.
+  Check everything into GitHub.
+- Add attribution at the bottom mentioning opencode and the model used.
+- Update prompt.txt with the above requests.
+
+Feature 1 — Taxation:
+- Keep only the new 2025 rules (Code on Social Security).
+- Add a government/private on/off switch.
+  - Government = gratuity fully tax-exempt.
+  - Private = compute tax on the gratuity portion only, asking for the user's
+    tax bracket (auto-detect from taxable annual income excluding gratuity, with
+    manual override). Show total gratuity, applicable tax bracket, tax component,
+    and in-hand amount (what the employer is likely to pay after TDS).
+- Include a "gratuity received earlier" input (default 0) that reduces the
+  lifetime Rs 20,00,000 exemption. Approved model (Option 1):
+    exempt = max(0, 20,00,000 - prior)
+    excess = max(0, gratuity - exempt)
+    tax = excess x marginal rate
+    in-hand = gratuity - tax
+- Present the user's result as the same table used in the approved examples
+  (Current | Prior | Exempt | Excess | Rate | Tax | In-hand).
+- Show the example calculations table on the page.
+- Mention prior-gratuity declaration and Form I submission during the gratuity
+  process.
+- Keep form light: default income/prior fields to 0.
+
+Feature 2 — Learn page:
+- New self-contained learn.html (Option A), linked from the calculator.
+- Cover: (1) 5-year threshold unchanged for permanent employees; (2) third-party /
+  agency contract workers excluded from the 1-year rule; (3) the "4 years and 7
+  months" gray area / 240-day rule; (4) total forfeiture for misconduct;
+  (5) 10-employee rule; (6) Rs 20 lakh tax exemption cap includes past payouts
+  (with Company A -> Company B example); (7) general exemptions (death and
+  permanent disablement). Plus 2025 effective date, 30-day payment, Form I.
+
+Feature 3 — AI assistant (GitHub Models, chosen over Azure since no subscription):
+- netlify/functions/chat.js proxy -> https://models.github.ai/inference with Bearer
+  token from GITHUB_MODELS_TOKEN env var (server-side only), system prompt with
+  gratuity knowledge, rate limiting (20/60s per IP+domain).
+- js/chat-data.js (rule-based knowledge base), js/chat-core.js (proxy-first,
+  KB-fallback), js/chat-widget.js (floating widget with calc context),
+  chat.html (dedicated assistant page).
+- Guidance on the GitHub Models token to be given at build stage; static site
+  works via the built-in fallback with no keys.
+
+Feature 4 — Netlify guide, but DO NOT deploy:
+- netlify.toml, .gitignore, NETLIFY_DEPLOY.md. The new project is hosted on
+  GitHub Pages, not Netlify. The Netlify function/config is included only as an
+  optional, deploy-ready backend for the AI chat.

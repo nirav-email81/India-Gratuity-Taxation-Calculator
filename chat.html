@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gratuity Assistant – India Gratuity Taxation Calculator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card { background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.15); max-width: 640px; width: 100%; padding: 28px; margin-top: 12px; }
+    .nav { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .nav a { padding: 8px 14px; border-radius: 20px; text-decoration: none; font-size: .85rem; font-weight: 600; background: #e8eaf6; color: #1a237e; }
+    h1 { color: #1a237e; font-size: 1.4rem; margin-bottom: 4px; }
+    .sub { color: #666; font-size: .85rem; margin-bottom: 18px; }
+    .chat { border: 2px solid #e0e0e0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; height: 480px; }
+    .chat-body { flex: 1; overflow-y: auto; padding: 14px; background: #f5f7fa; font-size: .88rem; line-height: 1.55; }
+    .msg { margin-bottom: 12px; max-width: 88%; padding: 9px 13px; border-radius: 12px; white-space: pre-wrap; }
+    .user { margin-left: auto; background: #1a237e; color: #fff; border-bottom-right-radius: 2px; }
+    .bot { margin-right: auto; background: #e8eaf6; color: #1a237e; border-bottom-left-radius: 2px; }
+    .bot small { display: block; margin-top: 5px; color: #888; }
+    .chat-input { display: flex; border-top: 1px solid #ddd; background: #fff; }
+    .chat-input input { flex: 1; border: none; padding: 14px; font-size: .9rem; outline: none; }
+    .chat-input button { border: none; background: #1a237e; color: #fff; padding: 0 22px; cursor: pointer; font-weight: 700; font-size: .9rem; }
+    .chat-input button:hover { background: #283593; }
+    .suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .chip { padding: 7px 12px; border-radius: 16px; background: #fff; border: 2px solid #bdbdbd; font-size: .78rem; font-weight: 600; color: #555; cursor: pointer; }
+    .chip:hover { border-color: #1a237e; color: #1a237e; }
+    .footer { margin-top: 18px; text-align: center; font-size: .75rem; color: #999; }
+    .attribution { margin-top: 12px; text-align: center; font-size: .65rem; color: #bbb; border-top: 1px solid #eee; padding-top: 12px; }
+    .attribution a { color: #999; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="nav">
+      <a href="index.html">Calculator</a>
+      <a href="learn.html">Learn about Gratuity</a>
+      <a href="chat.html">Gratuity Assistant</a>
+    </div>
+
+    <h1>Gratuity Assistant</h1>
+    <div class="sub">Your AI helper for gratuity formula, eligibility, tax and rules.</div>
+
+    <div class="suggestions">
+      <span class="chip" data-q="How is gratuity calculated?">How is gratuity calculated?</span>
+      <span class="chip" data-q="What is the tax exemption on gratuity?">Tax exemption</span>
+      <span class="chip" data-q="What is the 240-day rule?">240-day rule</span>
+      <span class="chip" data-q="What is the 50% wage rule?">50% wage rule</span>
+      <span class="chip" data-q="Do I need to declare prior gratuity?">Prior gratuity</span>
+    </div>
+
+    <div class="chat">
+      <div class="chat-body" id="chatBody"></div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="Ask your gratuity question…" />
+        <button id="sendBtn" type="button">Send</button>
+      </div>
+    </div>
+
+    <div class="footer">Answers are for illustration only. Consult a tax advisor for accurate liability.</div>
+    <div class="attribution">
+      Made with <a href="https://opencode.ai">opencode</a> (model: big-pickle)
+    </div>
+  </div>
+
+  <script src="js/chat-data.js"></script>
+  <script src="js/chat-core.js"></script>
+  <script>
+    var body = document.getElementById('chatBody');
+    var input = document.getElementById('chatInput');
+    var sendBtn = document.getElementById('sendBtn');
+
+    function addMsg(text, who) {
+      var d = document.createElement('div');
+      d.className = 'msg ' + who;
+      d.textContent = text;
+      body.appendChild(d);
+      body.scrollTop = body.scrollHeight;
+      return d;
+    }
+
+    async function send() {
+      var q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      addMsg(q, 'user');
+      var thinking = addMsg('Thinking…', 'bot');
+      try {
+        var ans = await window.ChatAPI.ask(q);
+        thinking.textContent = ans.text;
+        if (ans.source === 'github-models') {
+          thinking.innerHTML = ans.text + '<small>Powered by GitHub Models</small>';
+        }
+      } catch (e) {
+        thinking.textContent = 'Sorry, something went wrong. Please try again.';
+      }
+      body.scrollTop = body.scrollHeight;
+    }
+
+    sendBtn.onclick = send;
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+
+    document.querySelectorAll('.chip').forEach(function (c) {
+      c.onclick = function () {
+        input.value = c.getAttribute('data-q');
+        send();
+      };
+    });
+
+    addMsg('Hi! Ask me anything about gratuity — eligibility, formula, tax, the 50% rule, or Form I.', 'bot');
+  </script>
+</body>
+</html>

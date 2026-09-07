@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>India Gratuity Taxation Calculator – Code on Social Security, 2025</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
+      max-width: 620px;
+      width: 100%;
+      padding: 36px 32px;
+      margin: 12px auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      color: #1a237e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .sub {
+      color: #666;
+      font-size: .85rem;
+      margin-bottom: 20px;
+      border-left: 3px solid #1a237e;
+      padding-left: 12px;
+    }
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      padding: 8px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 600;
+      background: #e8eaf6;
+      color: #1a237e;
+      transition: background .2s;
+    }
+    .nav a:hover { background: #c5cae9; }
+    .section { margin-bottom: 20px; padding: 14px; border-radius: 12px; background: #fafafa; border: 1px solid #eee; }
+    .section h2 { font-size: .95rem; color: #333; margin-bottom: 10px; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; font-size: .85rem; color: #333; margin-bottom: 4px; }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: .95rem;
+      transition: border .2s;
+      outline: none;
+      background: #fff;
+    }
+    input:focus, select:focus { border-color: #1a237e; }
+    .input-hint { font-size: .75rem; color: #888; margin-top: 2px; }
+    .radio-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+    .radio-row label {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px; border-radius: 20px; cursor: pointer;
+      border: 2px solid #ddd; font-weight: 600; font-size: .82rem; margin-bottom: 0;
+    }
+    .radio-row label.sel { border-color: #1a237e; background: #e8eaf6; }
+    .radio-row input { width: auto; }
+    .switch-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .switch-wrap { display: flex; align-items: center; gap: 8px; }
+    .switch { position: relative; display: inline-block; width: 52px; height: 28px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #4caf50; transition: .3s; border-radius: 28px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
+      background-color: #fff; transition: .3s; border-radius: 50%;
+    }
+    .switch input:checked + .slider { background-color: #1a237e; }
+    .switch input:checked + .slider:before { transform: translateX(24px); }
+    .switch-label { font-weight: 600; font-size: .85rem; color: #1a237e; }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1a237e;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      margin-top: 8px;
+    }
+    button:hover { background: #283593; }
+    button:active { transform: scale(.98); }
+    .result {
+      margin-top: 20px;
+      border-radius: 14px;
+      background: #e8eaf6;
+      padding: 18px;
+      display: none;
+    }
+    .result.visible { display: block; }
+    .result .amount { font-size: 1.8rem; font-weight: 700; color: #1a237e; }
+    .result .amount span { font-size: .95rem; font-weight: 400; color: #555; }
+    .breakdown { margin-top: 12px; border-top: 1px solid #c5cae9; padding-top: 12px; }
+    .breakdown p { font-size: .84rem; color: #333; line-height: 1.6; }
+    .breakdown .calc-line { font-family: 'Courier New', monospace; background: #fff; padding: 5px 9px; border-radius: 6px; margin: 3px 0; }
+    .service-note { margin-top: 8px; padding: 8px 12px; background: #e3f2fd; border-radius: 6px; font-size: .8rem; color: #0d47a1; }
+    .tax-note { margin-top: 10px; padding: 10px 14px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px; font-size: .8rem; color: #664d03; }
+    .info-note { margin-top: 8px; padding: 8px 12px; background: #e8f5e9; border-left: 4px solid #2e7d32; border-radius: 6px; font-size: .8rem; color: #1b5e20; }
+    .error { color: #d32f2f; font-size: .8rem; margin-top: 6px; display: none; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .8rem; }
+    .table th, .table td { border: 1px solid #c5cae9; padding: 6px 8px; text-align: right; }
+    .table th { background: #1a237e; color: #fff; text-align: center; }
+    .table td.l, .table th.l { text-align: left; }
+    .table tr.highlight td { background: #fff9c4; font-weight: 600; }
+    .slab-table td { text-align: left; }
+    .collapsible { cursor: pointer; user-select: none; }
+    .collapsible::before { content: "▸ "; }
+    .collapsible.open::before { content: "▾ "; }
+    .collapse-body { display: none; }
+    .collapse-body.show { display: block; }
+    .eligibility {
+      margin-top: 20px; padding: 16px 18px; background: #f3e5f5;
+      border-radius: 12px; border-left: 4px solid #7b1fa2; font-size: .83rem; color: #333;
+    }
+    .eligibility strong { color: #4a148c; }
+    .eligibility ul { margin: 8px 0 0 18px; padding: 0; }
+    .eligibility li { margin-bottom: 6px; line-height: 1.5; }
+    .compliance { margin-top: 20px; padding: 16px 18px; background: #fff8e1; border-radius: 12px; border-left: 4px solid #f9a825; font-size: .82rem; color: #5d4037; }
+    .compliance strong { color: #ef6c00; }
+    .compliance ul { margin: 8px 0 0 18px; padding: 0; }
+    .compliance li { margin-bottom: 6px; line-height: 1.5; }
+    .examples { margin-top: 20px; padding: 16px 18px; background: #e0f7fa; border-radius: 12px; border-left: 4px solid #0097a7; font-size: .82rem; color: #01579b; }
+    .examples h3 { color: #006064; margin-bottom: 8px; }
+    .footer { margin-top: 18px; text-align: center; font-size: .75rem; color: #999; }
+    .attribution { margin-top: 12px; text-align: center; font-size: .65rem; color: #bbb; border-top: 1px solid #eee; padding-top: 12px; }
+    .attribution a { color: #999; text-decoration: none; }
+    .attribution a:hover { text-decoration: underline; }
+    .hidden { display: none; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .7rem; font-weight: 700; }
+    .badge.gov { background: #4caf50; color: #fff; }
+    .badge.private { background: #ff9800; color: #fff; }
+    .chip { display: inline-block; padding: 6px 12px; border-radius: 16px; background: #fff; border: 2px solid #ddd; font-weight: 600; font-size: .8rem; cursor: pointer; }
+    .chip.sel { border-color: #1a237e; background: #e8eaf6; }
+    .rate-badge { font-weight: 700; color: #d32f2f; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="nav">
+      <a href="index.html">Calculator</a>
+      <a href="learn.html">Learn about Gratuity</a>
+      <a href="chat.html">Gratuity Assistant</a>
+    </div>
+
+    <h1>India Gratuity Taxation Calculator</h1>
+    <div class="sub">Updated rules under the <strong>Code on Social Security, 2025</strong> — effective Nov 21, 2025</div>
+
+    <!-- Employment type -->
+    <div class="section">
+      <h2>Employment Type</h2>
+      <div class="radio-row">
+        <input type="radio" name="empType" id="empPermanent" value="permanent" checked />
+        <label for="empPermanent" id="lblPermanent">Permanent (company rolls)</label>
+        <input type="radio" name="empType" id="empFixed" value="fixed" />
+        <label for="empFixed" id="lblFixed">Fixed-Term / Contract</label>
+      </div>
+    </div>
+
+    <!-- Wage inputs -->
+    <div class="section">
+      <h2>Wage Inputs</h2>
+      <div class="form-group">
+        <label>Which data do you have?</label>
+        <div class="radio-row">
+          <label id="lblMode1" class="sel"><input type="radio" name="wageMode" value="mode1" checked onchange="setWageMode('mode1')" /> Basic + DA</label>
+          <label id="lblMode2"><input type="radio" name="wageMode" value="mode2" onchange="setWageMode('mode2')" /> Basic + DA + Other Allowances</label>
+          <label id="lblMode3"><input type="radio" name="wageMode" value="mode3" onchange="setWageMode('mode3')" /> I know my CTC</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="basic">Last Drawn Basic Wages (₹)</label>
+        <input id="basic" type="number" min="0" step="1" placeholder="e.g. 50000" />
+        <div class="input-hint">Monthly basic pay as per your last drawn salary slip</div>
+      </div>
+
+      <div id="fieldDA" class="form-group">
+        <label for="da">Dearness Allowance – DA (₹)</label>
+        <input id="da" type="number" min="0" step="1" placeholder="e.g. 15000" />
+      </div>
+
+      <div id="fieldAllow" class="form-group hidden">
+        <label for="allow">Other Qualifying Allowances (₹)</label>
+        <input id="allow" type="number" min="0" step="1" placeholder="e.g. 5000" />
+        <div class="input-hint">Allowances that form part of last drawn wages (HRA, special allowance, etc.)</div>
+      </div>
+
+      <div id="fieldCTC" class="form-group hidden">
+        <label for="ctc">Annual Cost to Company – CTC (₹)</label>
+        <input id="ctc" type="number" min="0" step="1" placeholder="e.g. 1200000" />
+        <div class="input-hint">If Basic &lt; 50% of monthly CTC, the 50% wage rule adds back the difference</div>
+      </div>
+
+      <div id="wageNote" class="info-note hidden"></div>
+    </div>
+
+    <!-- Years of service -->
+    <div class="section">
+      <h2>Years of Service</h2>
+      <div class="form-group">
+        <label for="service">Total Years of Service</label>
+        <input id="service" type="number" min="0" step="any" placeholder="e.g. 12.5" />
+        <div class="input-hint" id="serviceHint">Permanent: fractional &gt;6 months rounds up. Fixed-term: pro-rata, no rounding.</div>
+      </div>
+    </div>
+
+    <!-- Employment sector -->
+    <div class="section">
+      <h2>Employment Sector</h2>
+      <div class="switch-row">
+        <span class="switch-label">Government Employee</span>
+        <div class="switch-wrap">
+          <span id="sectorLabel" style="font-size:.8rem;color:#888;">Private <span class="badge private">PRIVATE</span></span>
+          <label class="switch">
+            <input type="checkbox" id="isGovt" onchange="setSector()" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <div id="govNote" class="info-note hidden">Government employees: your gratuity is <strong>fully tax-exempt</strong>. No tax is deducted.</div>
+    </div>
+
+    <!-- Tax inputs (private only) -->
+    <div class="section" id="taxSection">
+      <h2>Income Tax Details <span class="badge private">PRIVATE SECTOR</span></h2>
+
+      <div class="form-group">
+        <label for="annualIncome">Your Taxable Annual Income excluding Gratuity (₹)</label>
+        <input id="annualIncome" type="number" min="0" step="any" value="0" placeholder="e.g. 1800000" />
+        <div class="input-hint">After standard deduction. Default 0 — leave 0 if unsure; you can still see gratuity tax.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="priorGratuity">Gratuity Received Earlier from Any Employer (₹)</label>
+        <input id="priorGratuity" type="number" min="0" step="any" value="0" placeholder="e.g. 500000" />
+        <div class="input-hint">Default 0. Reduces the lifetime ₹20 lakh tax-free ceiling.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Tax Regime</label>
+        <div class="radio-row">
+          <label id="lblRegimeNew" class="sel"><input type="radio" name="regime" value="new" checked onchange="setRegime('new')" /> New Regime</label>
+          <label id="lblRegimeOld"><input type="radio" name="regime" value="old" onchange="setRegime('old')" /> Old Regime</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="collapsible" onclick="toggleCollapse(this, 'slabBody')"><span style="font-weight:600;font-size:.85rem">View tax slabs</span></div>
+        <div id="slabBody" class="collapse-body">
+          <table class="table slab-table" id="slabTable"></table>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="marginalRate">Marginal Tax Rate on Gratuity (%)</label>
+        <select id="marginalRate">
+          <option value="0">0%</option>
+          <option value="5">5%</option>
+          <option value="10">10%</option>
+          <option value="15">15%</option>
+          <option value="20">20%</option>
+          <option value="25">25%</option>
+          <option value="30">30%</option>
+        </select>
+        <div class="input-hint" id="rateHint">Auto-set from your income — you can adjust it manually.</div>
+      </div>
+    </div>
+
+    <div id="error" class="error">Please enter valid positive numbers in all fields.</div>
+
+    <button onclick="calculate()">Calculate Gratuity &amp; Tax</button>
+
+    <div id="result" class="result">
+      <div class="amount" id="amount">₹ 0</div>
+
+      <div class="breakdown" id="breakdown"></div>
+
+      <div class="service-note" id="serviceNote"></div>
+
+      <div id="wageResultNote" class="info-note hidden"></div>
+
+      <div id="taxBox">
+        <p style="font-weight:700;font-size:.9rem;margin-top:12px" id="taxHeadline"></p>
+        <table class="table" id="taxTable"></table>
+        <div class="tax-note" id="taxNote"></div>
+      </div>
+    </div>
+
+    <!-- Example calculations -->
+    <div class="examples">
+      <h3>Example Calculations — How the ₹20 lakh lifetime exemption &amp; tax works</h3>
+      <p style="margin-bottom:8px">These show how prior gratuity eats into the lifetime ceiling. Marginal rate assumed 30% for illustration.</p>
+      <table class="table" id="exampleTable">
+        <thead>
+          <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Rate</th><th>Tax</th><th>In-hand</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p style="margin-top:8px">The tax on gratuity is <strong>only</strong> on the amount above your remaining exemption (₹20,00,000 minus any gratuity received earlier).</p>
+    </div>
+
+    <!-- Compliance reminders -->
+    <div class="compliance">
+      <strong>Important — Before you receive gratuity</strong>
+      <ul>
+        <li><strong>Prior gratuity declaration:</strong> During the gratuity process you must <strong>declare whether you have received gratuity before</strong> (under this or any other employer). It reduces your lifetime ₹20,00,000 tax-free ceiling.</li>
+        <li><strong>Form I submission:</strong> Gratuity claims are submitted via <strong>Form I</strong> to your employer. The employer must settle the dues <strong>within 30 days</strong> of them becoming payable.</li>
+        <li><strong>Employer payment:</strong> If the employer delays beyond 30 days, they are liable to pay simple interest on the amount.</li>
+      </ul>
+    </div>
+
+    <!-- Eligibility -->
+    <div id="eligibility" class="eligibility">
+      <strong>Who is Eligible for Gratuity in India?</strong>
+      <ul>
+        <li><strong>Permanent employees:</strong> at least <strong>5 years</strong> of continuous service (or 4 years + 240 days in the final year under settled precedents), except death or permanent disablement.</li>
+        <li><strong>Fixed-term employees:</strong> eligible for <strong>pro-rata gratuity after just 1 year</strong> of continuous service (new 2025 rule).</li>
+        <li><strong>Third-party/agency contract workers:</strong> eligibility follows your actual employer (the staffing agency), not the client.</li>
+        <li>The organization must have <strong>10 or more</strong> employees on any day in the preceding 12 months.</li>
+        <li>Gratuity is payable on <strong>retirement, resignation, death, disablement, or termination</strong> — unless forfeited for misconduct.</li>
+      </ul>
+    </div>
+
+    <div class="footer">For illustration only. Consult a tax advisor for accurate liability.</div>
+    <div class="attribution">
+      Made with <a href="https://opencode.ai">opencode</a> (model: big-pickle)
+    </div>
+  </div>
+
+  <script>
+    const CAP = 2000000;
+
+    const SLABS_NEW = [
+      { max: 400000,  rate: 0  },
+      { max: 800000,  rate: 5  },
+      { max: 1200000, rate: 10 },
+      { max: 1600000, rate: 15 },
+      { max: 2000000, rate: 20 },
+      { max: 2400000, rate: 25 },
+      { max: Infinity,rate: 30 }
+    ];
+    const SLABS_OLD = [
+      { max: 250000,  rate: 0  },
+      { max: 500000,  rate: 5  },
+      { max: 1000000, rate: 20 },
+      { max: Infinity,rate: 30 }
+    ];
+
+    function fmt(n) { return '₹ ' + Math.round(n).toLocaleString('en-IN'); }
+    function fmtRate(r) { return r + '%'; }
+
+    function marginalRateFromIncome(income, regime) {
+      const slabs = regime === 'new' ? SLABS_NEW : SLABS_OLD;
+      for (let s of slabs) {
+        if (income < s.max) return s.rate;
+      }
+      return 30;
+    }
+
+    function renderSlabTable() {
+      const regime = document.querySelector('input[name="regime"]:checked').value;
+      const slabs = regime === 'new' ? SLABS_NEW : SLABS_OLD;
+      const t = document.getElementById('slabTable');
+      let prevMax = 0;
+      let html = '<thead><tr><th>Income bracket (₹)</th><th>Rate</th></tr></thead><tbody>';
+      for (let s of slabs) {
+        const top = s.max === Infinity ? 'and above' : s.max.toLocaleString('en-IN');
+        html += `<tr><td>${prevMax.toLocaleString('en-IN')} – ${top}</td><td>${s.rate}%</td></tr>`;
+        prevMax = s.max;
+      }
+      html += '</tbody>';
+      t.innerHTML = html;
+    }
+
+    function setRegime(regime) {
+      document.getElementById('lblRegimeNew').classList.toggle('sel', regime === 'new');
+      document.getElementById('lblRegimeOld').classList.toggle('sel', regime === 'old');
+      renderSlabTable();
+      autoSetRate();
+    }
+
+    function setWageMode(mode) {
+      document.getElementById('lblMode1').classList.toggle('sel', mode === 'mode1');
+      document.getElementById('lblMode2').classList.toggle('sel', mode === 'mode2');
+      document.getElementById('lblMode3').classList.toggle('sel', mode === 'mode3');
+      document.getElementById('fieldDA').classList.toggle('hidden', mode === 'mode3' || mode === 'mode2');
+      document.getElementById('fieldAllow').classList.toggle('hidden', mode !== 'mode2');
+      document.getElementById('fieldCTC').classList.toggle('hidden', mode !== 'mode3');
+    }
+
+    function setSector() {
+      const govt = document.getElementById('isGovt').checked;
+      document.getElementById('sectorLabel').innerHTML = govt
+        ? 'Government <span class="badge gov">GOVT</span>'
+        : 'Private <span class="badge private">PRIVATE</span>';
+      document.getElementById('govNote').classList.toggle('hidden', !govt);
+      document.getElementById('taxSection').classList.toggle('hidden', govt);
+    }
+
+    function autoSetRate() {
+      const income = parseFloat(document.getElementById('annualIncome').value) || 0;
+      const regime = document.querySelector('input[name="regime"]:checked').value;
+      const rate = marginalRateFromIncome(income, regime);
+      document.getElementById('marginalRate').value = String(rate);
+      document.getElementById('rateHint').textContent =
+        income > 0
+          ? `Auto-set to ${rate}% from your income — you can adjust it manually.`
+          : 'Income is 0 — set your expected bracket manually.';
+    }
+
+    function toggleCollapse(el, bodyId) {
+      const body = document.getElementById(bodyId);
+      body.classList.toggle('show');
+      el.classList.toggle('open');
+    }
+
+    function computeWageBase() {
+      const basic = parseFloat(document.getElementById('basic').value) || 0;
+      const da = parseFloat(document.getElementById('da').value) || 0;
+      const allow = parseFloat(document.getElementById('allow').value) || 0;
+      const ctc = parseFloat(document.getElementById('ctc').value) || 0;
+      const mode = document.querySelector('input[name="wageMode"]:checked').value;
+      let base, note = '';
+      if (mode === 'mode1') {
+        base = basic + da;
+      } else if (mode === 'mode2') {
+        base = basic + da + allow;
+      } else {
+        const halfMonthlyCTC = ctc / 12 * 0.5;
+        base = Math.max(basic + da, halfMonthlyCTC);
+        if (base > basic + da) {
+          note = `50% wage rule applied: Basic (₹${(basic+da).toLocaleString('en-IN')}) was below 50% of monthly CTC (₹${(ctc/12).toLocaleString('en-IN')}). Wage base raised to ₹${base.toLocaleString('en-IN')}.`;
+        }
+      }
+      return { base, note, basic, da };
+    }
+
+    function calculate() {
+      const { base, note } = computeWageBase();
+      const serviceRaw = parseFloat(document.getElementById('service').value);
+      const empType = document.querySelector('input[name="empType"]:checked').value;
+      const govt = document.getElementById('isGovt').checked;
+      const prior = parseFloat(document.getElementById('priorGratuity').value) || 0;
+      const income = parseFloat(document.getElementById('annualIncome').value) || 0;
+      const rate = parseFloat(document.getElementById('marginalRate').value) || 0;
+
+      const errorEl = document.getElementById('error');
+      const resultEl = document.getElementById('result');
+      if (isNaN(serviceRaw) || serviceRaw <= 0 || base <= 0) {
+        errorEl.style.display = 'block';
+        resultEl.classList.remove('visible');
+        return;
+      }
+      errorEl.style.display = 'none';
+
+      // Qualifying years
+      let years, roundingNote;
+      if (empType === 'fixed') {
+        years = serviceRaw;
+        roundingNote = `Fixed-term: pro-rata on actual service = ${years} years (no rounding).`;
+      } else {
+        const frac = serviceRaw - Math.floor(serviceRaw);
+        years = frac >= 0.5 ? Math.ceil(serviceRaw) : Math.floor(serviceRaw);
+        roundingNote = serviceRaw !== years
+          ? `Permanent: ${serviceRaw} yrs → rounded ${frac >= 0.5 ? 'up' : 'down'} to ${years} year${years !== 1 ? 's' : ''}.`
+          : `Permanent: exactly ${years} year${years !== 1 ? 's' : ''} — no rounding.`;
+      }
+
+      const gratuity = Math.round((base * 15 * years) / 26);
+
+      // Eligibility message
+      let eligNote = '';
+      if (empType === 'permanent' && years < 5) {
+        eligNote = `Permanent employees normally need 5 years (or 4 years + 240 days in the final year). You have ${years} — the amount below is shown for reference only.`;
+      } else if (empType === 'fixed' && years < 1) {
+        eligNote = `Fixed-term employees need 1 year of continuous service. You have ${years} — shown for reference only.`;
+      }
+
+      // Taxation
+      const exemptAvail = Math.max(0, CAP - prior);
+      const taxableExcess = Math.max(0, gratuity - exemptAvail);
+      const tax = govt ? 0 : Math.round(taxableExcess * rate / 100);
+      const inHand = gratuity - tax;
+
+      document.getElementById('amount').innerHTML = fmt(gratuity);
+
+      let breakdown = `
+        <p><strong>Step-by-step calculation:</strong></p>
+        <p class="calc-line">Wage base = ${fmt(base)}</p>
+        <p class="calc-line">Qualifying service = ${years} year${years !== 1 ? 's' : ''} (${empType === 'fixed' ? 'fixed-term, pro-rata' : 'permanent'})</p>
+        <p class="calc-line">Formula: ${fmt(base)} × 15 × ${years} ÷ 26</p>
+        <p class="calc-line">= ${fmt(base * 15 * years)} ÷ 26</p>
+        <p class="calc-line"><strong>= ${fmt(gratuity)}</strong></p>
+      `;
+      document.getElementById('breakdown').innerHTML = breakdown;
+      document.getElementById('serviceNote').innerHTML = roundingNote + (eligNote ? `<br><span style="color:#b71c1c">${eligNote}</span>` : '');
+
+      const wageResultNote = document.getElementById('wageResultNote');
+      if (note) { wageResultNote.innerHTML = note; wageResultNote.classList.remove('hidden'); }
+      else { wageResultNote.classList.add('hidden'); }
+
+      // Tax box
+      const taxHeadline = document.getElementById('taxHeadline');
+      const taxTable = document.getElementById('taxTable');
+      const taxNote = document.getElementById('taxNote');
+      if (govt) {
+        taxHeadline.textContent = 'Government employee — gratuity fully tax-exempt (₹0 tax).';
+        taxTable.innerHTML = '';
+        taxNote.innerHTML = 'No tax is deducted on gratuity for government employees.';
+      } else {
+        taxHeadline.innerHTML = `Your gratuity is <span class="rate-badge">${fmt(gratuity)}</span>. Tax applies only above your remaining exemption.`;
+        taxTable.innerHTML = `
+          <thead>
+            <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Marginal Rate</th><th>Tax on Gratuity</th><th>In-hand</th></tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td>${fmt(gratuity)}</td>
+              <td>${fmt(prior)}</td>
+              <td>${fmt(exemptAvail)}</td>
+              <td>${fmt(taxableExcess)}</td>
+              <td>${fmtRate(rate)}</td>
+              <td>${fmt(tax)}</td>
+              <td>${fmt(inHand)}</td>
+            </tr>
+          </tbody>
+        `;
+        taxNote.innerHTML =
+          taxableExcess === 0
+            ? `Your gratuity is within the remaining ₹20,00,000 lifetime exemption, so there is <strong>no tax on the gratuity</strong>. In-hand = full gratuity of ${fmt(gratuity)}.`
+            : `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`;
+      }
+
+      resultEl.classList.add('visible');
+      window.dispatchEvent(new Event('calculateDone'));
+    }
+
+    function buildExampleTable() {
+      const rows = [
+        [1800000, 0,       2000000, 0,        30, 0,       1800000],
+        [1800000, 600000,  1400000, 400000,   30, 120000,  1680000],
+        [2400000, 500000,  1500000, 900000,   30, 270000,  2130000],
+        [3200000, 0,       2000000, 1200000,  30, 360000,  2840000],
+        [1000000, 0,       2000000, 0,        30, 0,       1000000]
+      ];
+      const tbody = document.querySelector('#exampleTable tbody');
+      tbody.innerHTML = rows.map(r => {
+        const [cur, prior, ex, excess, rate, tax, hand] = r;
+        return `<tr><td>${fmt(cur)}</td><td>${fmt(prior)}</td><td>${fmt(ex)}</td><td>${fmt(excess)}</td><td>${fmtRate(rate)}</td><td>${fmt(tax)}</td><td>${fmt(hand)}</td></tr>`;
+      }).join('');
+    }
+
+    document.getElementById('annualIncome').addEventListener('input', autoSetRate);
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+
+    renderSlabTable();
+    buildExampleTable();
+    setSector();
+  </script>
+  <script src="js/chat-data.js"></script>
+  <script src="js/chat-core.js"></script>
+  <script src="js/chat-widget.js"></script>
+</body>
+</html>
