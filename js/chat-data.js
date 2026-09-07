@@ -21,6 +21,13 @@ Example: wage ₹50,000, 12 years = (50,000 × 15 × 12) ÷ 26 = ₹4,50,000.`
 • The employer must have 10+ employees on any day in the preceding 12 months.`
   },
   {
+    keys: ['deduct', 'deduction', 'deducted', 'refund', 'f&f', 'fnf', 'full and final', 'wrongful', 'pocket', 'not eligible', 'ineligible', 'ctc deduction'],
+    a: `Leaving before the vesting period (5 years personal / 1 year fixed-term) means NO statutory gratuity — the payout can be ₹0. But check your payslips & offer letter:
+• If "gratuity" appears only INSIDE your CTC as a provision (≈4.81% of basic p.a.), it was never deducted from your cash salary — it is the employer's cost, and there is nothing to refund.
+• If the company ACTUALLY deducted a monthly amount labelled "gratuity" from your earnings, that is an UNLAWFUL deduction — the Payment of Gratuity Act does not allow gratuity to be funded from an employee's salary. You can claim it back in your Full & Final (F&F) settlement as a wrongful salary deduction (not as gratuity).
+Action: check payslips for a "Gratuity" line under Deductions, re-read your appointment letter, and if it was deducted, email HR before signing F&F demanding the refund.`
+  },
+  {
     keys: ['5 year', 'five year', '5-year', 'permanent'],
     a: `The 5-year rule still applies to permanent employees. The 1-year rule is ONLY for fixed-term employees.
 Permanent = 5 years continuous service (or 4 years + 240 days in the final year). Death or permanent disablement waives the requirement.`

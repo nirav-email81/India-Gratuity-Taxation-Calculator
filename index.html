@@ -120,6 +120,12 @@
     .result.visible { display: block; }
     .result .amount { font-size: 1.8rem; font-weight: 700; color: #1a237e; }
     .result .amount span { font-size: .95rem; font-weight: 400; color: #555; }
+    .elig-warning {
+      margin-top: 10px; padding: 12px 14px; background: #fff3e0;
+      border: 2px solid #e65100; border-left: 6px solid #e65100; border-radius: 10px;
+      font-size: .88rem; font-weight: 700; color: #bf360c; line-height: 1.55;
+    }
+    .elig-warning .quiet { font-weight: 500; color: #6d4c41; }
     .breakdown { margin-top: 12px; border-top: 1px solid #c5cae9; padding-top: 12px; }
     .breakdown p { font-size: .84rem; color: #333; line-height: 1.6; }
     .breakdown .calc-line { font-family: 'Courier New', monospace; background: #fff; padding: 5px 9px; border-radius: 6px; margin: 3px 0; }
@@ -354,6 +360,8 @@
     <div id="result" class="result">
       <div class="amount" id="amount">₹ 0</div>
 
+      <div id="eligWarning" class="elig-warning hidden"></div>
+
       <div class="breakdown" id="breakdown"></div>
 
       <div class="service-note" id="serviceNote"></div>
@@ -512,7 +520,7 @@
       document.getElementById('lblMode1').classList.toggle('sel', mode === 'mode1');
       document.getElementById('lblMode2').classList.toggle('sel', mode === 'mode2');
       document.getElementById('lblMode3').classList.toggle('sel', mode === 'mode3');
-      document.getElementById('fieldDA').classList.toggle('hidden', mode === 'mode3' || mode === 'mode2');
+      document.getElementById('fieldDA').classList.toggle('hidden', mode === 'mode3');
       document.getElementById('fieldAllow').classList.toggle('hidden', mode !== 'mode2');
       document.getElementById('fieldCTC').classList.toggle('hidden', mode !== 'mode3');
     }
@@ -603,12 +611,21 @@
 
       const gratuity = Math.round((base * 15 * years) / 26);
 
-      // Eligibility message
-      let eligNote = '';
-      if (empType === 'permanent' && years < 5) {
-        eligNote = `Permanent employees normally need 5 years (or 4 years + 240 days in the final year). You have ${years} — the amount below is shown for reference only.`;
-      } else if (empType === 'fixed' && years < 1) {
-        eligNote = `Fixed-term employees need 1 year of continuous service. You have ${years} — shown for reference only.`;
+      // Eligibility — flag when tenure is below the qualifying threshold
+      const eligWarn = document.getElementById('eligWarning');
+      const notEligible = (empType === 'permanent' && years < 5) || (empType === 'fixed' && years < 1);
+      if (notEligible) {
+        if (empType === 'permanent') {
+          eligWarn.innerHTML =
+            `<strong>REFERENCE ONLY — you may NOT be eligible for a gratuity payout.</strong> Permanent employees need at least <strong>5 years of continuous service</strong> (or 4 years + 240 working days in the final year). With only ${years} year${years === 1 ? '' : 's'} worked, the actual payout can be <strong>₹0</strong> — the amount above is an illustration, not an entitlement.<br>
+            <span class="quiet">If a sum labelled <strong>"gratuity"</strong> was actually deducted from your monthly salary/CTC:</span> the Act does not allow gratuity to be funded from your salary, so that deducted amount must be refunded in your <strong>Full &amp; Final (F&amp;F) settlement</strong> — as a wrongful salary deduction, not as gratuity. (A gratuity line only shown inside CTC as a provision is the employer's cost, not a deduction, and is not refundable.)`;
+        } else {
+          eligWarn.innerHTML =
+            `<strong>REFERENCE ONLY — you may NOT be eligible for a gratuity payout.</strong> Fixed-term employees need at least <strong>1 year of continuous service</strong>. With only ${years} year${years === 1 ? '' : 's'} worked, the actual payout can be <strong>₹0</strong> — the amount above is an illustration, not an entitlement.`;
+        }
+        eligWarn.classList.remove('hidden');
+      } else {
+        eligWarn.classList.add('hidden');
       }
 
       // Taxation
@@ -649,7 +666,7 @@
         <p class="calc-line"><strong>= ${fmt(gratuity)}</strong></p>
       `;
       document.getElementById('breakdown').innerHTML = breakdown;
-      document.getElementById('serviceNote').innerHTML = roundingNote + (eligNote ? `<br><span style="color:#b71c1c">${eligNote}</span>` : '');
+      document.getElementById('serviceNote').innerHTML = roundingNote;
 
       const wageResultNote = document.getElementById('wageResultNote');
       if (note) { wageResultNote.innerHTML = note; wageResultNote.classList.remove('hidden'); }
