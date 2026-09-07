@@ -18,6 +18,8 @@
     .card { background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.15); max-width: 640px; width: 100%; padding: 28px; margin-top: 12px; }
     .nav { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
     .nav a { padding: 8px 14px; border-radius: 20px; text-decoration: none; font-size: .85rem; font-weight: 600; background: #e8eaf6; color: #1a237e; }
+    .nav a:hover { background: #c5cae9; }
+    .nav a.active { background: #1a237e; color: #fff; }
     h1 { color: #1a237e; font-size: 1.4rem; margin-bottom: 4px; }
     .sub { color: #666; font-size: .85rem; margin-bottom: 18px; }
     .chat { border: 2px solid #e0e0e0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; height: 480px; }
@@ -56,7 +58,7 @@
     <div class="nav">
       <a href="index.html">Calculator</a>
       <a href="learn.html">Learn about Gratuity</a>
-      <a href="chat.html">Gratuity Assistant</a>
+      <a href="chat.html" class="active">Gratuity Assistant</a>
     </div>
 
     <h1>Gratuity Assistant</h1>
