@@ -1,5 +1,9 @@
 window.KB_ANSWERS = [
   {
+    keys: ['teacher', 'teachers', 'school', 'schools', 'college', 'colleges', 'education', 'private school'],
+    a: `Yes — following landmark legal updates, teachers and staff working in private schools and educational institutions are fully eligible for statutory gratuity, on par with corporate employees. Being a school does not exempt the employer from the gratuity rules.`
+  },
+  {
     keys: ['formula', 'calculate', 'computed', 'how is gratuity calculated'],
     a: `Gratuity = (Last Drawn Basic Wages + qualifying allowances) × 15 × Years of Service ÷ 26.
 • The '15' = 15 days of wages per completed year.
@@ -65,11 +69,31 @@ The surcharge is a % of the income-tax on the gratuity, not of the gratuity itse
   },
   {
     keys: ['misconduct', 'forfeit', 'forfeiture', 'removed', 'termination', 'terminated', 'fired'],
-    a: `Gratuity can be forfeited (fully or partially) if services are terminated for riotous or disorderly conduct, acts of violence, moral turpitude, or willful damage/loss to company property. The employer must follow proper disciplinary procedure and issue a formal forfeiture notice.`
+    a: `Gratuity can be forfeited (fully or partially) if services are terminated for riotous or disorderly conduct, acts of violence, moral turpitude, or willful damage/loss to company property. Recent Supreme Court rulings: forfeiture must equal the exact amount of PROVEN financial loss (no deductions on unverified claims), and a criminal conviction is NOT required — an internal disciplinary inquiry conducted with due process (natural justice) is enough to support forfeiture for violence or moral turpitude.`
+  },
+  {
+    keys: ['supreme court', 'court case', 'judgement', 'judgment', 'ruling', 'landmark', 'precedent'],
+    a: `Recent landmark judgements on gratuity:
+• Prabhat Kumar Singh v. Accu Pack (2026): an employer cannot withhold gratuity on unproven, generic financial-loss claims — forfeiture must strictly equal the verified, audited loss.
+• N. Manoharan v. Administrative Officer (2026): government civil servants are governed by the CCS Pension Rules, not the Payment of Gratuity Act.
+• Western Coal Fields v. Manohar Fulzele (2025-26): no criminal conviction is needed to forfeit gratuity — an internal disciplinary inquiry with due process is sufficient.
+• High Courts (Bombay etc.): internal management disputes are no excuse to delay payment — gratuity must be settled in 30 days or 10% p.a. simple interest applies.`
+  },
+  {
+    keys: ['nomination', 'form f', 'form-f', 'formf', 'nominee', 'heirs', 'death'],
+    a: `Employees complete a Form F (Nomination Form) once they complete a year of service. On death, the full gratuity is paid to the designated nominee or legal heirs, and the tenure requirements are waived. If the nominee is a minor, the employer deposits the amount into a bank savings account or controlled fund until the minor turns 18.`
+  },
+  {
+    keys: ['attach', 'attachment', 'seizure', 'debt', 'loan', 'bankruptcy'],
+    a: `Gratuity is legally protected from attachment — it cannot be seized by any court order or debt-recovery agency to pay off an employee's personal loans or bankruptcy dues. The full amount is yours (minus any valid TDS on the taxable portion).`
+  },
+  {
+    keys: ['covered', 'not covered', 'not covered by', '15/30', 'direct', 'acting under'],
+    a: `Companies covered under the Payment of Gratuity Act use (15 × Last Drawn Wages × Tenure) ÷ 26, with salary = Basic + DA (≥ 50% of CTC) and rounding up above 6 months. Companies NOT covered that still pay voluntarily often use (15 × Average Last 10 Months Salary × Tenure) ÷ 30, counting only completed years — check your contract for the exact basis.`
   },
   {
     keys: ['10 employee', '10+', 'small', 'startup', 'employer size', 'business'],
-    a: `An employer must pay statutory gratuity only if it has employed 10 or more people on any single day in the preceding 12 months. Businesses under that threshold are exempt (they may still choose to pay).`
+    a: `An employer must pay statutory gratuity only if it has employed 10 or more people on any single day in the preceding 12 months. Businesses under that threshold are exempt (they may still choose to pay). Once covered, a company is always covered — if its headcount later drops below 10 it cannot stop paying gratuity.`
   },
   {
     keys: ['death', 'disablement', 'disabled', 'waived'],
@@ -77,7 +101,7 @@ The surcharge is a % of the income-tax on the gratuity, not of the gratuity itse
   },
   {
     keys: ['0', 'zero', 'no income', 'unsure'],
-    a: `If income fields are left at 0, the calculator uses only the gratuity formula. To compute tax on the gratuity accurately, enter your taxable annual income excluding gratuity and any prior gratuity received.`
+    a: `If income fields are left at 0, the calculator uses only the gratuity formula and applies the manual rate you selected. To compute the exact tax on the gratuity, enter your taxable annual income for the payout year (excluding gratuity) and any prior gratuity received.`
   },
   {
     keys: ['hi', 'hello', 'hey', 'help', 'what can you do'],

@@ -39,6 +39,8 @@
       padding: 12px 16px; font-size: .88rem; color: #5d4037; line-height: 1.6;
     }
     .caveat .caveat-box strong { color: #ef6c00; }
+    .caveat .caveat-box ul { margin: 8px 0 0 16px; }
+    .caveat .caveat-box li { margin-bottom: 6px; line-height: 1.6; }
     .caveat .example {
       background: #e8eaf6; border-radius: 8px; padding: 10px 14px;
       font-size: .85rem; color: #283593; margin-top: 10px; line-height: 1.6;
@@ -49,12 +51,45 @@
     }
     .exempt h2 { color: #1b5e20; font-size: 1.1rem; margin-bottom: 8px; }
     .exempt p { font-size: .9rem; color: #333; line-height: 1.6; }
+    .refbase {
+      background: #e3f2fd; border-radius: 14px; border-left: 6px solid #1565c0;
+      padding: 20px 24px; margin-bottom: 20px; font-size: .88rem; color: #0d47a1; line-height: 1.7;
+    }
+    .refbase h2 { color: #0d47a1; font-size: 1.1rem; margin-bottom: 8px; }
+    .refbase table { margin-top: 10px; }
+    .judge {
+      background: #fff; border-radius: 14px; border-left: 6px solid #4527a0;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 20px 24px; margin-bottom: 20px;
+    }
+    .judge h2 { font-size: 1.05rem; color: #311b92; margin-bottom: 6px; }
+    .judge .ruling { font-size: .9rem; color: #311b92; font-weight: 700; margin-bottom: 10px; }
+    .judge .ruling strong { color: #1a237e; }
+    .judge .pt {
+      background: #ede7f6; border-radius: 8px; padding: 10px 14px;
+      font-size: .85rem; color: #4a148c; margin-bottom: 8px; line-height: 1.6;
+    }
+    .judge .pt strong { color: #311b92; }
+    .judge .pt p { margin-bottom: 6px; }
+    .judge .pt p:last-child { margin-bottom: 0; }
     .keyfacts {
       background: #e0f7fa; border-radius: 14px; border-left: 6px solid #0097a7;
       padding: 20px 24px; margin-bottom: 20px;
     }
     .keyfacts h2 { color: #006064; font-size: 1.1rem; margin-bottom: 8px; }
     .keyfacts ul { margin-left: 18px; line-height: 1.8; font-size: .9rem; color: #01579b; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 4px; }
+    table.compare { width: 100%; border-collapse: collapse; font-size: .8rem; min-width: 520px; }
+    table.compare th, table.compare td { border: 1px solid #90caf9; padding: 8px 10px; text-align: left; vertical-align: top; }
+    table.compare th { background: #1565c0; color: #fff; text-align: center; }
+    table.compare td b { color: #0d47a1; }
+    table.compare td.hl { background: #e8f5e9; }
+    .sources {
+      background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06); font-size: .8rem; color: #555;
+    }
+    .sources h2 { font-size: .95rem; color: #333; margin-bottom: 8px; }
+    .sources ul { margin-left: 18px; line-height: 1.9; }
+    .sources a { color: #1a237e; }
     .disclaimer {
       background: #fff3cd; border-radius: 10px; padding: 14px 18px; font-size: .8rem;
       color: #664d03; margin-bottom: 20px;
@@ -68,9 +103,9 @@
       .nav a { padding: 6px 10px; font-size: .75rem; }
       h1 { font-size: 1.25rem; }
       .sub { font-size: .82rem; margin-bottom: 16px; }
-      .caveat, .exempt, .keyfacts { padding: 14px 16px; border-radius: 12px; }
-      .caveat h2, .exempt h2, .keyfacts h2 { font-size: 1rem; }
-      .caveat .rule, .caveat .caveat-box, .exempt p, .keyfacts ul { font-size: .84rem; }
+      .caveat, .exempt, .refbase, .keyfacts { padding: 14px 16px; border-radius: 12px; }
+      .caveat h2, .exempt h2, .refbase h2, .keyfacts h2 { font-size: 1rem; }
+      .caveat .rule, .caveat .caveat-box, .exempt p, .refbase, .keyfacts ul { font-size: .84rem; }
       .toc { padding: 12px 14px; }
     }
   </style>
@@ -90,11 +125,16 @@
       <h2>On this page</h2>
       <ol>
         <li><a href="#c1">The 5-year threshold for permanent employees is unchanged</a></li>
-        <li><a href="#c2">Contract employees via third parties are excluded</a></li>
-        <li><a href="#c3">The "4 years and 7 months" gray area (240-day rule)</a></li>
-        <li><a href="#c4">Total forfeiture for misconduct</a></li>
-        <li><a href="#c5">Employer size restrictions (10-employee rule)</a></li>
-        <li><a href="#c6">The ₹20 lakh tax exemption cap includes past payouts</a></li>
+        <li><a href="#c2">Private school teachers and staff are covered</a></li>
+        <li><a href="#c3">Contract employees via third parties are excluded</a></li>
+        <li><a href="#c4">The "4 years and 7 months" gray area (240-day rule)</a></li>
+        <li><a href="#c5">Total forfeiture for misconduct</a></li>
+        <li><a href="#c6">The 10-employee mandate — and "once covered, always covered"</a></li>
+        <li><a href="#c7">The ₹20 lakh tax exemption cap and what is compared</a></li>
+        <li><a href="#compare">Companies covered under the Act vs not — the formula difference</a></li>
+        <li><a href="#protections">Delays, interest, and legal protections</a></li>
+        <li><a href="#judgements">Landmark court judgements on gratuity</a></li>
+        <li><a href="#nominations">Nominations and death benefits</a></li>
         <li><a href="#exempt">General exemptions: when the 5-year rule is waived</a></li>
       </ol>
     </div>
@@ -108,15 +148,23 @@
     </div>
 
     <div id="c2" class="caveat">
-      <h2>2. Contract Employees via Third Parties are Excluded</h2>
+      <h2>2. Private School Teachers and Staff are Covered</h2>
+      <p class="rule">Gratuity is not only for corporate employees.</p>
+      <div class="caveat-box">
+        <strong>The caveat:</strong> Following landmark legal precedents, <strong>teachers and staff in private schools and educational institutions are fully eligible for statutory gratuity</strong> on par with employees in any other covered organization. Being a school does not exempt the employer from the gratuity rules.
+      </div>
+    </div>
+
+    <div id="c3" class="caveat">
+      <h2>3. Contract Employees via Third Parties are Excluded</h2>
       <p class="rule">Not all contract workers benefit from the new 1-year timeline.</p>
       <div class="caveat-box">
         <strong>The caveat:</strong> If you are a contractual worker hired through a <strong>third-party staffing agency or contractor</strong> to work at a client company, you do <strong>not</strong> qualify for the 1-year direct gratuity rule from that client company. Your eligibility depends on your employment tenure with your <strong>actual employer (the staffing agency)</strong>.
       </div>
     </div>
 
-    <div id="c3" class="caveat">
-      <h2>3. The "4 Years and 7 Months" Gray Area (The 240-Day Rule)</h2>
+    <div id="c4" class="caveat">
+      <h2>4. The "4 Years and 7 Months" Gray Area (The 240-Day Rule)</h2>
       <p class="rule">The law specifies "continuous service" — but courts interpret a "completed year" differently based on active working days.</p>
       <div class="caveat-box">
         <strong>The caveat:</strong> For a regular 5-day or 6-day week office, completing <strong>240 working days</strong> in the final year of service counts as a full year. So a permanent employee who resigns after <strong>4 years and 240 days</strong> (roughly 4 years and 7–8 months) is technically eligible under settled judicial precedents — though some employers still rigidly enforce a strict 5-calendar-year rule.
@@ -124,8 +172,8 @@
       <div class="example">Example: You joined on 1 Jan 2021 and resign on 1 Aug 2025. That is ~4 years 7 months with ~240+ working days in the final year. Under the 240-day rule you may qualify — but be prepared to push back if HR quotes the strict 5-year rule.</div>
     </div>
 
-    <div id="c4" class="caveat">
-      <h2>4. Total Forfeiture for Misconduct</h2>
+    <div id="c5" class="caveat">
+      <h2>5. Total Forfeiture for Misconduct</h2>
       <p class="rule">Gratuity is a reward for long-term loyalty — but it can be legally withheld.</p>
       <div class="caveat-box">
         <strong>The caveat:</strong> An employer can <strong>completely or partially forfeit</strong> your gratuity if your services are terminated due to <strong>riotous or disorderly conduct, acts of violence, moral turpitude</strong>, or if you cause <strong>willful damage/loss</strong> to the company's property. The company must follow proper disciplinary procedures and issue a formal forfeiture notice.
@@ -133,21 +181,123 @@
       <div class="example">If you are fired for serious misconduct (e.g. violence at work), the gratuity may not be paid. This is different from a routine resignation or a reduction in force.</div>
     </div>
 
-    <div id="c5" class="caveat">
-      <h2>5. Employer Size Restrictions (The 10-Employee Rule)</h2>
+    <div id="c6" class="caveat">
+      <h2>6. The 10-Employee Mandate — and "Once Covered, Always Covered"</h2>
       <p class="rule">The updated social security codes do not automatically apply to every business.</p>
       <div class="caveat-box">
-        <strong>The caveat:</strong> An organization is legally mandated to pay gratuity only if it has employed <strong>10 or more people on any single day in the preceding 12 months</strong>. If a startup or small business operates with fewer than 10 employees, they are exempt from paying statutory gratuity (though an employer may still voluntarily pay more).
+        <strong>The mandate:</strong> An organization is legally mandated to pay gratuity only if it has employed <strong>10 or more people on any single day in the preceding 12 months</strong>. If a startup or small business operates with fewer than 10 employees, they are exempt from paying statutory gratuity (though an employer may still voluntarily pay more).
+        <ul>
+          <li><strong>Once covered, always covered:</strong> if a company's headcount later <strong>drops below 10</strong>, it <strong>cannot stop providing gratuity</strong> — it remains legally bound by the Act permanently.</li>
+        </ul>
       </div>
     </div>
 
-    <div id="c6" class="caveat">
-      <h2>6. The ₹20 Lakh Tax Exemption Cap Includes Past Payouts</h2>
+    <div id="c7" class="caveat">
+      <h2>7. The ₹20 Lakh Tax Exemption Cap Includes Past Payouts</h2>
       <p class="rule">The maximum tax-free gratuity is <strong>₹20,00,000</strong> for private-sector employees.</p>
       <div class="caveat-box">
         <strong>The caveat:</strong> This cap is a <strong>lifetime cumulative limit</strong>. If you switch jobs and receive ₹12 lakh tax-free gratuity from Company A, then later receive ₹15 lakh from Company B, only ₹8 lakh of the second payout is tax-exempt. The remaining ₹7 lakh is added to your taxable income.
+        <ul>
+          <li><strong>Government employees:</strong> gratuity is <strong>100% tax-free with no upper limit</strong>.</li>
+          <li><strong>Private sector &amp; PSUs:</strong> the tax-exempt amount for a company covered by the Act is the <strong>lowest of</strong>: the actual gratuity received, the statutory ₹20 lakh cap, and the amount derived from the 15/26 formula. Since the calculator already uses the 15/26 formula, this works out to the cap (₹20,00,000 minus any prior gratuity).</li>
+        </ul>
       </div>
       <div class="example">Company A pays ₹12 L (tax-free, uses ₹12 L of the ₹20 L ceiling). Remaining ceiling = ₹8 L. Company B pays ₹15 L → ₹8 L exempt, ₹7 L taxable.</div>
+    </div>
+
+    <div id="compare" class="refbase">
+      <h2>Companies Covered Under the Act vs Not Covered — the Formula Difference</h2>
+      <p>The total gratuity calculation can differ significantly depending on whether your organization is formally covered by the Payment of Gratuity Act or pays gratuity voluntarily.</p>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Feature</th><th>Covered under the Act</th><th>Not covered (voluntary)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Formula</b></td>
+              <td class="hl">(15 × Last Drawn Wages × Tenure) ÷ 26</td>
+              <td>(15 × Average Salary of Last 10 Months × Tenure) ÷ 30</td>
+            </tr>
+            <tr>
+              <td><b>Denominator reason</b></td>
+              <td>26 days (excludes 4 Sundays per month)</td>
+              <td>30 calendar days</td>
+            </tr>
+            <tr>
+              <td><b>What counts as salary</b></td>
+              <td>Basic Pay + DA (must be ≥ 50% of CTC)</td>
+              <td>Basic Pay + DA (varies by contract terms)</td>
+            </tr>
+            <tr>
+              <td><b>Rounding of months</b></td>
+              <td>Service above 6 months rounds up to a full year</td>
+              <td>Only fully completed years count; months are dropped</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:8px">The calculator on the home page uses the <strong>covered-companies formula (15/26)</strong>, which is the statutory default. If your employer is not covered but pays gratuity voluntarily, the actual payment may follow the 15/30 formula or your contract, so check with HR.</p>
+    </div>
+
+    <div id="protections" class="refbase">
+      <h2>Delays, Interest, and Legal Protections</h2>
+      <p>The law protects employees from delays and preserves the gratuity amount from creditors.</p>
+      <ul style="margin-left:18px;line-height:1.8;font-size:.88rem;color:#0d47a1">
+        <li><strong>Interest on delays:</strong> if the employer delays payment beyond the <strong>30-day window</strong> without a valid reason, it must pay <strong>simple interest</strong> (typically around 10% per annum) from the day the gratuity became due until the actual payment date.</li>
+        <li><strong>Legally protected from attachment:</strong> gratuity <strong>cannot be attached</strong> by any court order or debt-recovery agency to pay off an employee's personal loans or bankruptcy dues.</li>
+      </ul>
+    </div>
+
+    <div id="judgements" class="refbase">
+      <h2>Landmark Court Judgements on Gratuity</h2>
+      <p>Following the legal enforcement of the Code on Social Security, the Supreme Court of India and various High Courts have delivered judgements clarifying employer liability, employee misconduct, and jurisdictional crossovers.</p>
+
+      <div class="judge">
+        <h2>1. Prabhat Kumar Singh &amp; Others v. Accu Pack — August 2026</h2>
+        <div class="ruling"><strong>Core ruling:</strong> No withholding or forfeiting gratuity based on unproven, generic claims of financial loss.</div>
+        <div class="pt">
+          <p><strong>The case:</strong> The employer attempted to forfeit a large amount of employee gratuity (citing a ₹50 lakh loss) under Section 4(6)(a) after terminating employees for alleged misconduct.</p>
+          <p><strong>The judgement:</strong> The Supreme Court held that while employers may forfeit gratuity for damage or loss caused by an employee's misconduct, the forfeiture must strictly equal the <strong>exact amount of proven financial loss</strong>. The deduction was rejected because the company failed to produce a verified audit report or independent accounting evidence substantiating the loss.</p>
+        </div>
+      </div>
+
+      <div class="judge">
+        <h2>2. N. Manoharan v. The Administrative Officer &amp; Anr. — February 2026</h2>
+        <div class="ruling"><strong>Core ruling:</strong> Government civil servants are strictly excluded from the Payment of Gratuity Act (PGA).</div>
+        <div class="pt">
+          <p><strong>The case:</strong> Retired employees of the Heavy Water Plant, Tuticorin (Department of Atomic Energy) sought gratuity under the standard corporate PGA formula rather than government service limits.</p>
+          <p><strong>The judgement:</strong> The Supreme Court clarified that Central Government civil servants holding civil posts are governed exclusively by the <strong>Central Civil Services (CCS) Pension Rules</strong> and cannot parallelly file claims under the PGA.</p>
+        </div>
+      </div>
+
+      <div class="judge">
+        <h2>3. Western Coal Fields Ltd. v. Manohar Govinda Fulzele — Late 2025/2026</h2>
+        <div class="ruling"><strong>Core ruling:</strong> Criminal conviction is not mandatory to forfeit gratuity on grounds of moral turpitude.</div>
+        <div class="pt">
+          <p><strong>The case:</strong> This ruling overturned the earlier <em>Union Bank of India v. C.G. Ajay Babu</em> precedent (2018), which required a criminal conviction before gratuity could be forfeited.</p>
+          <p><strong>The judgement:</strong> An <strong>internal disciplinary inquiry</strong> held with due process (natural justice) is sufficient to validate a forfeiture for acts of violence or moral turpitude — the employer need not wait for a criminal court verdict.</p>
+        </div>
+      </div>
+
+      <div class="judge">
+        <h2>4. High Court Mandates on the 10% Statutory Delay Interest</h2>
+        <div class="ruling"><strong>Core ruling:</strong> Internal administrative or management disputes are invalid excuses to delay employee payouts.</div>
+        <div class="pt">
+          <p><strong>The judgement:</strong> In multi-bench judgements (including the Bombay High Court), the courts have tightly enforced the <strong>30-day settlement window</strong>. Even where a company undergoes a management overhaul, board split, or internal disputes, employee statutory rights remain independent. If gratuity is unpaid after 30 days, employers must pay <strong>10% per annum simple interest</strong> calculated from the day the retirement/resignation took effect.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:10px"><strong>Related legislative update:</strong> To ensure consistent enforcement of the new social-security code across all states, the Supreme Court has directed the Union Government to streamline strict operational rules so that parallel provisions (including benefit timelines under the code) are implemented uniformly. The practical effect for employees is stronger, faster settlement of statutory benefits such as gratuity.</p>
+    </div>
+
+    <div id="nominations" class="refbase">
+      <h2>Nominations and Death Benefits</h2>
+      <p>Employees are expected to complete a <strong>Form F (Nomination Form)</strong> once they complete a year of service.</p>
+      <ul style="margin-left:18px;line-height:1.8;font-size:.88rem;color:#0d47a1">
+        <li><strong>In the event of death:</strong> the gratuity becomes immediately payable to the <strong>designated nominee or legal heirs</strong> — the tenure requirements are waived (see General Exemptions below).</li>
+        <li><strong>Minor nominees:</strong> if the nominee is a <strong>minor</strong> at the time of payout, the employer must deposit the cash into a <strong>bank savings account or a controlled fund</strong> that is released only when the minor turns <strong>18</strong>.</li>
+      </ul>
     </div>
 
     <div id="exempt" class="exempt">
@@ -169,6 +319,24 @@
         <li><strong>50% wage rule:</strong> Basic wages must be at least <strong>50% of CTC</strong> — allowances above that get added back to the gratuity base.</li>
         <li><strong>Form I:</strong> Claims are submitted via <strong>Form I</strong>; you must <strong>declare prior gratuity</strong> received.</li>
         <li><strong>Surcharge on high incomes:</strong> When your total income (including the taxable gratuity) crosses <strong>₹50 lakh / ₹1 crore / ₹2 crore / ₹5 crore</strong>, a <strong>surcharge of 10% / 15% / 25% / 37%</strong> is added on the income-tax amount — the calculator shows this automatically.</li>
+      </ul>
+    </div>
+
+    <div class="sources">
+      <h2>Sources</h2>
+      <ul>
+        <li><a href="https://www.ujjivansfb.bank.in/banking-blogs/personal-finance/gratuity-eligibility-rules-calculation">Ujjivan SFB — Gratuity eligibility rules &amp; calculation</a></li>
+        <li><a href="https://clc.gov.in/clc/acts-rules/payment-gratuity-act">Office of the Chief Labour Commissioner — Payment of Gratuity Act</a></li>
+        <li><a href="https://www.bajajfinserv.in/investments/gratuity-rules">Bajaj Finance — Gratuity rules</a></li>
+        <li><a href="https://www.myndsolution.com/gratuity-calculation-in-india-formula-eligibility-and-recent-rule-changes-explained/">MyND Solution — Gratuity calculation &amp; recent rule changes</a></li>
+        <li><a href="https://groww.in/calculators/gratuity-calculator">Groww — Gratuity calculator &amp; rules</a></li>
+        <li><a href="https://numericaconsulting.com/blog/gratuity-rules-india-2025-labour-code/">Numerica Consulting — Gratuity rules India 2025</a></li>
+        <li><a href="https://lawbeat.in/supreme-court-judgments/section-46bii-payment-of-gratuity-act-sc-clarifies-when-employer-can-forfeit-gratuity-1624011">Law Beat — Supreme Court on forfeiture (Prabhat Kumar Singh v. Accu Pack)</a></li>
+        <li><a href="https://lawsathi.in/blog/supreme-court-ruling-payment-of-gratuity-act-inapplicable-to/">LawSathi — PGA inapplicable to government civil servants (N. Manoharan)</a></li>
+        <li><a href="https://amlegals.com/grounds-for-forfeiture-of-employee-gratuity-legal-perspectives-and-conditions/">Amlegals — Grounds for forfeiture (Western Coal Fields v. Fulzele)</a></li>
+        <li><a href="https://www.taxathand.com/article/38940/India/2025/Court-orders-employer-to-pay-10-interest-on-delayed-gratuity-payment">Tax@Hand — Court orders 10% interest on delayed gratuity</a></li>
+        <li><a href="https://lifeinsurance.adityabirlacapital.com/articles/retirement-insurance/supreme-court-judgments-related-to-gratuity/">Aditya Birla Capital — Supreme Court judgements on gratuity</a></li>
+        <li><a href="https://www.scconline.com/blog/post/2026/09/04/woman-return-to-same-post-after-maternity-leave-delhi-hc/">SCC Online — Social security code enforcement updates</a></li>
       </ul>
     </div>
 
