@@ -162,6 +162,33 @@
     .chip { display: inline-block; padding: 6px 12px; border-radius: 16px; background: #fff; border: 2px solid #ddd; font-weight: 600; font-size: .8rem; cursor: pointer; }
     .chip.sel { border-color: #1a237e; background: #e8eaf6; }
     .rate-badge { font-weight: 700; color: #d32f2f; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 4px; }
+    .table-wrap table { margin-top: 6px; min-width: 560px; }
+    .surcharge {
+      margin-top: 10px; padding: 10px 14px; background: #fdecea;
+      border-left: 4px solid #d32f2f; border-radius: 6px; font-size: .8rem; color: #b71c1c; line-height: 1.6;
+    }
+    .surcharge strong { color: #7f0000; }
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .card { padding: 22px 16px; border-radius: 16px; margin: 6px auto; }
+      h1 { font-size: 1.15rem; }
+      .sub { font-size: .78rem; margin-bottom: 14px; }
+      .nav { gap: 6px; margin-bottom: 14px; }
+      .nav a { padding: 6px 10px; font-size: .75rem; }
+      .section { padding: 10px; }
+      .result .amount { font-size: 1.5rem; }
+      .radio-row label { padding: 7px 10px; font-size: .78rem; }
+      button { padding: 12px; font-size: .98rem; }
+      .examples, .eligibility, .compliance { padding: 12px 14px; }
+      .footer, .attribution { font-size: .68rem; }
+    }
+    @media (max-width: 400px) {
+      .card { padding: 18px 12px; }
+      .switch-label { font-size: .78rem; }
+      .table th, .table td { padding: 5px 6px; font-size: .74rem; }
+      .result { padding: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -277,7 +304,14 @@
       <div class="form-group">
         <div class="collapsible" onclick="toggleCollapse(this, 'slabBody')"><span style="font-weight:600;font-size:.85rem">View tax slabs</span></div>
         <div id="slabBody" class="collapse-body">
-          <table class="table slab-table" id="slabTable"></table>
+          <div class="table-wrap"><table class="table slab-table" id="slabTable"></table></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="collapsible" onclick="toggleCollapse(this, 'surBody')"><span style="font-weight:600;font-size:.85rem">View surcharge slabs (income above 50 lakh)</span></div>
+        <div id="surBody" class="collapse-body">
+          <div class="table-wrap"><table class="table slab-table" id="surTable"></table></div>
         </div>
       </div>
 
@@ -311,7 +345,8 @@
 
       <div id="taxBox">
         <p style="font-weight:700;font-size:.9rem;margin-top:12px" id="taxHeadline"></p>
-        <table class="table" id="taxTable"></table>
+        <div class="table-wrap"><table class="table" id="taxTable"></table></div>
+        <div class="surcharge" id="surchargeBox"></div>
         <div class="tax-note" id="taxNote"></div>
       </div>
     </div>
@@ -320,12 +355,12 @@
     <div class="examples">
       <h3>Example Calculations — How the ₹20 lakh lifetime exemption &amp; tax works</h3>
       <p style="margin-bottom:8px">These show how prior gratuity eats into the lifetime ceiling. Marginal rate assumed 30% for illustration.</p>
-      <table class="table" id="exampleTable">
+      <div class="table-wrap"><table class="table" id="exampleTable">
         <thead>
           <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Rate</th><th>Tax</th><th>In-hand</th></tr>
         </thead>
         <tbody></tbody>
-      </table>
+      </table></div>
       <p style="margin-top:8px">The tax on gratuity is <strong>only</strong> on the amount above your remaining exemption (₹20,00,000 minus any gratuity received earlier).</p>
     </div>
 
@@ -376,6 +411,28 @@
       { max: Infinity,rate: 30 }
     ];
 
+    const SURCHARGE_SLABS = {
+      new: [
+        { gt: 5e6,  threshold: 5e6,  rate: 10 },
+        { gt: 1e7,  threshold: 1e7,  rate: 15 },
+        { gt: 2e7,  threshold: 2e7,  rate: 25 }
+      ],
+      old: [
+        { gt: 5e6,  threshold: 5e6,  rate: 10 },
+        { gt: 1e7,  threshold: 1e7,  rate: 15 },
+        { gt: 2e7,  threshold: 2e7,  rate: 25 },
+        { gt: 5e7,  threshold: 5e7,  rate: 37 }
+      ]
+    };
+
+    function surchargeInfo(totalIncome, regime) {
+      let best = null;
+      for (const s of SURCHARGE_SLABS[regime]) {
+        if (totalIncome > s.gt) best = s;
+      }
+      return best;
+    }
+
     function fmt(n) { return '₹ ' + Math.round(n).toLocaleString('en-IN'); }
     function fmtRate(r) { return r + '%'; }
 
@@ -402,10 +459,23 @@
       t.innerHTML = html;
     }
 
+    function renderSurTable() {
+      const regime = document.querySelector('input[name="regime"]:checked').value;
+      const t = document.getElementById('surTable');
+      let html = '<thead><tr><th>Total income above (₹)</th><th>Surcharge on income-tax</th></tr></thead><tbody>';
+      for (const s of SURCHARGE_SLABS[regime]) {
+        html += `<tr><td>${s.gt.toLocaleString('en-IN')}</td><td>${s.rate}%</td></tr>`;
+      }
+      html += regime === 'new' ? '<tr><td>New regime beyond 2 crore</td><td>25% (capped)</td></tr>' : '<tr><td>Old regime beyond 5 crore</td><td>37%</td></tr>';
+      html += '</tbody>';
+      t.innerHTML = html;
+    }
+
     function setRegime(regime) {
       document.getElementById('lblRegimeNew').classList.toggle('sel', regime === 'new');
       document.getElementById('lblRegimeOld').classList.toggle('sel', regime === 'old');
       renderSlabTable();
+      renderSurTable();
       autoSetRate();
     }
 
@@ -510,7 +580,23 @@
       const exemptAvail = Math.max(0, CAP - prior);
       const taxableExcess = Math.max(0, gratuity - exemptAvail);
       const tax = govt ? 0 : Math.round(taxableExcess * rate / 100);
-      const inHand = gratuity - tax;
+
+      // Surcharge (income above 50 lakh etc.) — levied as a % of the income-tax on the gratuity
+      const regime = document.querySelector('input[name="regime"]:checked').value;
+      const totalIncome = income + taxableExcess;
+      let surTax = 0, surRate = 0, surRelief = 0, surSlab = null;
+      if (!govt && taxableExcess > 0) {
+        surSlab = surchargeInfo(totalIncome, regime);
+        if (surSlab) {
+          surRate = surSlab.rate;
+          const baseSur = Math.round(tax * surRate / 100);
+          const excessAbove = Math.max(0, totalIncome - surSlab.threshold);
+          surRelief = Math.max(0, baseSur - excessAbove);
+          surTax = baseSur - surRelief;
+        }
+      }
+      const grossTax = tax + surTax;
+      const inHand = gratuity - grossTax;
 
       document.getElementById('amount').innerHTML = fmt(gratuity);
 
@@ -533,9 +619,11 @@
       const taxHeadline = document.getElementById('taxHeadline');
       const taxTable = document.getElementById('taxTable');
       const taxNote = document.getElementById('taxNote');
+      const surBox = document.getElementById('surchargeBox');
       if (govt) {
         taxHeadline.textContent = 'Government employee — gratuity fully tax-exempt (₹0 tax).';
         taxTable.innerHTML = '';
+        surBox.innerHTML = '';
         taxNote.innerHTML = 'No tax is deducted on gratuity for government employees.';
       } else {
         taxHeadline.innerHTML = `Your gratuity is <span class="rate-badge">${fmt(gratuity)}</span>. Tax applies only above your remaining exemption.`;
@@ -555,10 +643,28 @@
             </tr>
           </tbody>
         `;
+
+        if (taxableExcess === 0) {
+          surBox.innerHTML = `No taxable excess — nothing to surcharge. Your gratuity is within the ₹20,00,000 lifetime exemption.`;
+        } else if (!surSlab) {
+          surBox.innerHTML = `No surcharge — your total income (${fmt(totalIncome)}) is at or below ₹50,00,000.`;
+        } else {
+          surBox.innerHTML =
+            `<strong>Surcharge on income-tax (${regime === 'new' ? 'new regime' : 'old regime'})</strong><br>
+            Total income used: annual income (${fmt(income)}) + taxable gratuity excess (${fmt(taxableExcess)}) = <strong>${fmt(totalIncome)}</strong><br>
+            Income crosses the ₹${surSlab.threshold.toLocaleString('en-IN')} mark → surcharge rate <strong>${surRate}%</strong> on the income-tax<br>
+            Surcharge on gratuity tax = <strong>${fmt(surTax)}</strong>${surRelief > 0 ? ` <span style="color:#7f0000">(marginal relief of ${fmt(surRelief)} applied near the threshold)</span>` : ''}<br>
+            <strong>Total tax on gratuity = ${fmt(grossTax)}</strong> (includes surcharge) <br>
+            <strong>Final in-hand = ${fmt(inHand)}</strong><br>
+            <span style="font-size:.72rem">The 4% health &amp; education cess is not included.</span>`;
+        }
+
         taxNote.innerHTML =
           taxableExcess === 0
             ? `Your gratuity is within the remaining ₹20,00,000 lifetime exemption, so there is <strong>no tax on the gratuity</strong>. In-hand = full gratuity of ${fmt(gratuity)}.`
-            : `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`;
+            : surTax > 0
+              ? `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>, plus a surcharge of ${fmt(surTax)} (income above ₹50 lakh). Total tax = <strong>${fmt(grossTax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`
+              : `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`;
       }
 
       resultEl.classList.add('visible');
@@ -584,6 +690,7 @@
     document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
 
     renderSlabTable();
+    renderSurTable();
     buildExampleTable();
     setSector();
   </script>

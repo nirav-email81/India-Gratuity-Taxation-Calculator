@@ -44,6 +44,14 @@ Example: prior gratuity ₹6L, current ₹18L → remaining exemption ₹14L →
     a: `You must declare any gratuity received earlier. The ₹20 lakh lifetime exemption is reduced by prior gratuity received from any employer. This is part of the Form-I claim process.`
   },
   {
+    keys: ['surcharge', '50 lakh', '50 lakh', '1 crore', '2 crore', '5 crore', 'marginal relief', '50 l'],
+    a: `Surcharge on income-tax applies when your total income (annual income + taxable gratuity excess) crosses a threshold:
+• Above ₹50 lakh: 10% of the income-tax
+• Above ₹1 crore: 15%
+• Above ₹2 crore: 25% (capped at 25% in the new regime; 25% up to ₹5 crore and 37% above ₹5 crore in the old regime)
+The surcharge is a % of the income-tax on the gratuity, not of the gratuity itself. Marginal relief near a threshold ensures your tax does not jump disproportionately — the calculator applies it automatically. The 4% health & education cess is not included by default.`
+  },
+  {
     keys: ['form i', 'formI', 'form-1', 'form 1', 'submit', 'claim'],
     a: `Gratuity is claimed by submitting Form I to your employer. The employer must settle the dues within 30 days of them becoming payable. If delayed, simple interest becomes payable. You also declare prior gratuity received as part of this process.`
   },

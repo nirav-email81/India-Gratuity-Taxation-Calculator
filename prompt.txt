@@ -26,12 +26,19 @@ Feature 1 — Taxation:
     excess = max(0, gratuity - exempt)
     tax = excess x marginal rate
     in-hand = gratuity - tax
+- Surcharge on high incomes (from total income = annual income + taxable gratuity
+  excess): >50 lakh = 10%, >1 crore = 15%, >2 crore = 25%, >5 crore = 37% (old
+  regime; new regime caps at 25%). Surcharge is a % of the income-tax amount on
+  the gratuity, with marginal relief near thresholds. Show it in a separate box
+  under the result table and include the surcharge in total tax and in-hand.
 - Present the user's result as the same table used in the approved examples
   (Current | Prior | Exempt | Excess | Rate | Tax | In-hand).
 - Show the example calculations table on the page.
 - Mention prior-gratuity declaration and Form I submission during the gratuity
   process.
 - Keep form light: default income/prior fields to 0.
+- Make the site fully mobile-friendly: responsive page layouts on all pages and
+  horizontally scrollable tables (table-wrap) on small screens.
 
 Feature 2 — Learn page:
 - New self-contained learn.html (Option A), linked from the calculator.

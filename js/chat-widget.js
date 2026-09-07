@@ -45,7 +45,9 @@
     + '.cw-bot small{display:block;margin-top:4px;color:#888;}'
     + '.cw-input-row{display:flex;border-top:1px solid #ddd;}'
     + '.cw-input-row input{flex:1;border:none;padding:12px;font-size:.85rem;outline:none;}'
-    + '.cw-input-row button{border:none;background:#1a237e;color:#fff;padding:0 16px;cursor:pointer;font-weight:700;}';
+    + '.cw-input-row button{border:none;background:#1a237e;color:#fff;padding:0 16px;cursor:pointer;font-weight:700;}'
+    + '@media (max-width:640px){.cw-panel{right:10px;left:10px;width:auto;max-width:none;bottom:78px;}'
+    + '.cw-body{height:42vh;}}';
   document.head.appendChild(style);
 
   var btn = document.createElement('button');

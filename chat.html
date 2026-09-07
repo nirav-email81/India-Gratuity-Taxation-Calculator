@@ -36,6 +36,18 @@
     .footer { margin-top: 18px; text-align: center; font-size: .75rem; color: #999; }
     .attribution { margin-top: 12px; text-align: center; font-size: .65rem; color: #bbb; border-top: 1px solid #eee; padding-top: 12px; }
     .attribution a { color: #999; text-decoration: none; }
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .card { padding: 16px 12px; border-radius: 16px; }
+      .nav { gap: 6px; margin-bottom: 14px; }
+      .nav a { padding: 6px 10px; font-size: .75rem; }
+      h1 { font-size: 1.15rem; }
+      .chat { height: calc(100vh - 260px); min-height: 320px; }
+      .chat-body { padding: 10px; font-size: .84rem; }
+      .msg { max-width: 92%; }
+      .chat-input input { padding: 12px; font-size: .85rem; }
+      .chat-input button { padding: 0 16px; }
+    }
   </style>
 </head>
 <body>

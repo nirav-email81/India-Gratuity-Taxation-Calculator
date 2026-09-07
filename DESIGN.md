@@ -38,12 +38,22 @@ Exemption model (Option 1, confirmed):
 ExemptAvailable = max(0, 20,00,000 − priorGratuity)
 TaxableExcess   = max(0, currentGratuity − ExemptAvailable)
 Tax             = TaxableExcess × marginalRate
-InHand          = currentGratuity − Tax
+TotalIncome     = annualIncome + TaxableExcess
+Surcharge       = Tax × surchargeRate(TotalIncome)   (0 if TotalIncome ≤ 50,00,000)
+Surcharge       = max(0, baseSurcharge − max(0, TotalIncome − threshold))  ← marginal relief
+GrossTax        = Tax + Surcharge
+InHand          = currentGratuity − GrossTax
 ```
 
 - **Government employees**: fully tax-exempt (0 tax).
 - **Marginal rate**: auto-detected from taxable annual income (excluding gratuity)
   using the selected regime's slab table; user-adjustable via dropdown.
+- **Surcharge** applies on the income-tax amount (NOT the gratuity) when total
+  income crosses a threshold. Rates: >₹50L = 10%, >₹1Cr = 15%, >₹2Cr = 25%,
+  and >₹5Cr = 37% under the old regime (new regime caps at 25%). Marginal relief
+  caps the surcharge near each threshold.
+- **Mobile**: responsive layouts on all three pages; tables scroll horizontally
+  (`.table-wrap`) and the chat widget goes edge-to-edge under 640px.
 
 ### Tax regimes (FY 2025-26 slabs used for auto detect)
 | New regime (₹) | Rate | Old regime (₹) | Rate |

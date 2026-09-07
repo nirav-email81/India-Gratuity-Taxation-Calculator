@@ -31,11 +31,28 @@ Option-1 exemption model:
 | Exempt available | `max(0, ₹20,00,000 − prior gratuity)` |
 | Taxable excess | `max(0, current gratuity − exempt available)` |
 | Tax on gratuity | `taxable excess × marginal rate` |
-| In-hand | `current gratuity − tax` |
+| Surcharge | `tax × surcharge rate` when total income > ₹50,00,000 |
+| Tax + Surcharge | `tax + surcharge` (with marginal relief near thresholds) |
+| In-hand | `current gratuity − tax − surcharge` |
 
 - **Government employees**: fully tax-exempt.
 - The marginal rate is auto-detected from your taxable annual income (New or Old
   regime) and can be adjusted manually.
+- **Surcharge rates** (levied on the income-tax amount when total income — annual
+  income plus taxable gratuity excess — crosses a threshold):
+
+| Total income | New regime | Old regime |
+| --- | --- | --- |
+| ₹50,00,000 – ₹1,00,00,000 | 10% | 10% |
+| ₹1,00,00,000 – ₹2,00,00,000 | 15% | 15% |
+| ₹2,00,00,000 – ₹5,00,00,000 | 25% | 25% |
+| above ₹5,00,00,000 | 25% (capped) | 37% |
+
+- **Marginal relief** is applied automatically near a threshold so income marginally
+  above ₹50 lakh or ₹1 crore is not overtaxed.
+- The calculator is mobile-friendly: tables scroll horizontally on small screens and
+  all cards reflow for phones.
+- The 4% health & education cess is not included (noted on the page).
 
 ## Sample test values (gratuity calc)
 
