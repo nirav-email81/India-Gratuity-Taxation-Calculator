@@ -282,9 +282,9 @@
       <h2>Income Tax Details <span class="badge private">PRIVATE SECTOR</span></h2>
 
       <div class="form-group">
-        <label for="annualIncome">Your Taxable Annual Income excluding Gratuity (₹)</label>
+        <label for="annualIncome">Your Taxable Annual Income Excluding Gratuity — for the Payout Year (₹)</label>
         <input id="annualIncome" type="number" min="0" step="any" value="0" placeholder="e.g. 1800000" />
-        <div class="input-hint">After standard deduction. Default 0 — leave 0 if unsure; you can still see gratuity tax.</div>
+        <div class="input-hint">For the current year in which gratuity is paid (after standard deduction). Default 0 — leave 0 if unsure; you can still see gratuity tax.</div>
       </div>
 
       <div class="form-group">
@@ -361,7 +361,7 @@
         </thead>
         <tbody></tbody>
       </table></div>
-      <p style="margin-top:8px">The tax on gratuity is <strong>only</strong> on the amount above your remaining exemption (₹20,00,000 minus any gratuity received earlier).</p>
+      <p style="margin-top:8px">The tax on gratuity is <strong>only</strong> on the amount above your remaining exemption (₹20,00,000 minus any gratuity received earlier). These examples assume a <strong>flat 30% bracket</strong> for simplicity — the calculator above taxes the excess <strong>slab-by-slab</strong> on (your payout-year income + taxable excess) for the exact amount, reaching the higher brackets automatically.</p>
     </div>
 
     <!-- Compliance reminders -->
@@ -444,6 +444,18 @@
       return 30;
     }
 
+    function progressiveTax(amount, regime) {
+      const slabs = regime === 'new' ? SLABS_NEW : SLABS_OLD;
+      let tax = 0, prevMax = 0;
+      for (let s of slabs) {
+        if (amount <= prevMax) break;
+        const taxable = Math.min(amount, s.max) - prevMax;
+        if (taxable > 0) tax += taxable * s.rate / 100;
+        prevMax = s.max;
+      }
+      return tax;
+    }
+
     function renderSlabTable() {
       const regime = document.querySelector('input[name="regime"]:checked').value;
       const slabs = regime === 'new' ? SLABS_NEW : SLABS_OLD;
@@ -497,15 +509,21 @@
       document.getElementById('taxSection').classList.toggle('hidden', govt);
     }
 
+    let manualRate = false;
+
     function autoSetRate() {
+      manualRate = false;
       const income = parseFloat(document.getElementById('annualIncome').value) || 0;
       const regime = document.querySelector('input[name="regime"]:checked').value;
       const rate = marginalRateFromIncome(income, regime);
       document.getElementById('marginalRate').value = String(rate);
-      document.getElementById('rateHint').textContent =
-        income > 0
-          ? `Auto-set to ${rate}% from your income — you can adjust it manually.`
-          : 'Income is 0 — set your expected bracket manually.';
+      if (income > 0) {
+        document.getElementById('rateHint').textContent =
+          'Income entered — tax is computed slab-by-slab on (income + taxable gratuity excess), i.e. tax(income+excess) − tax(income). The dropdown below is only used when income is 0.';
+      } else {
+        document.getElementById('rateHint').textContent =
+          'Income is 0 — set your expected bracket manually. It is applied as a flat rate on the taxable excess.';
+      }
     }
 
     function toggleCollapse(el, bodyId) {
@@ -579,10 +597,15 @@
       // Taxation
       const exemptAvail = Math.max(0, CAP - prior);
       const taxableExcess = Math.max(0, gratuity - exemptAvail);
-      const tax = govt ? 0 : Math.round(taxableExcess * rate / 100);
+      const regime = document.querySelector('input[name="regime"]:checked').value;
+      const exactTax = income > 0 && taxableExcess > 0 && !manualRate;
+      const tax = govt ? 0
+        : exactTax
+          ? Math.round(Math.max(0, progressiveTax(income + taxableExcess, regime) - progressiveTax(income, regime)))
+          : Math.round(taxableExcess * rate / 100);
+      const topRate = exactTax ? marginalRateFromIncome(income + taxableExcess, regime) : rate;
 
       // Surcharge (income above 50 lakh etc.) — levied as a % of the income-tax on the gratuity
-      const regime = document.querySelector('input[name="regime"]:checked').value;
       const totalIncome = income + taxableExcess;
       let surTax = 0, surRate = 0, surRelief = 0, surSlab = null;
       if (!govt && taxableExcess > 0) {
@@ -629,7 +652,7 @@
         taxHeadline.innerHTML = `Your gratuity is <span class="rate-badge">${fmt(gratuity)}</span>. Tax applies only above your remaining exemption.`;
         taxTable.innerHTML = `
           <thead>
-            <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Marginal Rate</th><th>Tax on Gratuity</th><th>In-hand</th></tr>
+            <tr><th>Current Gratuity</th><th>Prior Gratuity</th><th>Exempt Available</th><th>Taxable Excess</th><th>Rate / Top Bracket</th><th>Tax on Gratuity</th><th>In-hand</th></tr>
           </thead>
           <tbody>
             <tr class="highlight">
@@ -637,7 +660,7 @@
               <td>${fmt(prior)}</td>
               <td>${fmt(exemptAvail)}</td>
               <td>${fmt(taxableExcess)}</td>
-              <td>${fmtRate(rate)}</td>
+              <td>${fmtRate(topRate)}</td>
               <td>${fmt(tax)}</td>
               <td>${fmt(inHand)}</td>
             </tr>
@@ -662,9 +685,9 @@
         taxNote.innerHTML =
           taxableExcess === 0
             ? `Your gratuity is within the remaining ₹20,00,000 lifetime exemption, so there is <strong>no tax on the gratuity</strong>. In-hand = full gratuity of ${fmt(gratuity)}.`
-            : surTax > 0
-              ? `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>, plus a surcharge of ${fmt(surTax)} (income above ₹50 lakh). Total tax = <strong>${fmt(grossTax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`
-              : `Taxable excess of ${fmt(taxableExcess)} is taxed at your ${fmtRate(rate)} marginal bracket = <strong>${fmt(tax)}</strong>. Your employer deducts this under TDS; you receive <strong>${fmt(inHand)}</strong>.`;
+            : exactTax
+              ? `The taxable excess of ${fmt(taxableExcess)} is added ON TOP of your income, raising your total to ${fmt(income + taxableExcess)} and climbing into the ${fmtRate(topRate)} bracket. Tax on the gratuity = tax(${fmt(income + taxableExcess)}) − tax(${fmt(income)}) = <strong>${fmt(progressiveTax(income + taxableExcess, regime))} − ${fmt(progressiveTax(income, regime))} = ${fmt(tax)}</strong>.${surTax > 0 ? ` Plus a surcharge of ${fmt(surTax)} (income above ₹50 lakh).` : ''} In-hand = <strong>${fmt(inHand)}</strong>.`
+              : `${manualRate ? 'You have set a custom rate.' : 'Enter your annual income (for the payout year) for an exact slab-wise calculation.'} Taxable excess of ${fmt(taxableExcess)} taxed at your assumed ${fmtRate(rate)} bracket = <strong>${fmt(tax)}</strong>. In-hand = <strong>${fmt(inHand)}</strong>.`;
       }
 
       resultEl.classList.add('visible');
@@ -687,6 +710,7 @@
     }
 
     document.getElementById('annualIncome').addEventListener('input', autoSetRate);
+    document.getElementById('marginalRate').addEventListener('change', function () { manualRate = true; });
     document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
 
     renderSlabTable();

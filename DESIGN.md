@@ -37,8 +37,9 @@ Exemption model (Option 1, confirmed):
 ```
 ExemptAvailable = max(0, 20,00,000 − priorGratuity)
 TaxableExcess   = max(0, currentGratuity − ExemptAvailable)
-Tax             = TaxableExcess × marginalRate
-TotalIncome     = annualIncome + TaxableExcess
+Tax             = income > 0 ? tax(income + TaxableExcess) − tax(income)   ← exact slab-wise
+                            : TaxableExcess × manualMarginalRate            ← fallback
+TotalIncome     = income + TaxableExcess
 Surcharge       = Tax × surchargeRate(TotalIncome)   (0 if TotalIncome ≤ 50,00,000)
 Surcharge       = max(0, baseSurcharge − max(0, TotalIncome − threshold))  ← marginal relief
 GrossTax        = Tax + Surcharge
@@ -46,8 +47,10 @@ InHand          = currentGratuity − GrossTax
 ```
 
 - **Government employees**: fully tax-exempt (0 tax).
-- **Marginal rate**: auto-detected from taxable annual income (excluding gratuity)
-  using the selected regime's slab table; user-adjustable via dropdown.
+- **Exact incremental tax**: the taxable excess is added on top of the payout-year
+  income, so it is taxed at the bracket(s) reached by `income + excess` (e.g. income
+  12L + excess 10L → 25% bracket → tax = ₹2.5L − ₹0.6L = ₹1.9L). The manual rate
+  dropdown is a fallback only when income is left at 0.
 - **Surcharge** applies on the income-tax amount (NOT the gratuity) when total
   income crosses a threshold. Rates: >₹50L = 10%, >₹1Cr = 15%, >₹2Cr = 25%,
   and >₹5Cr = 37% under the old regime (new regime caps at 25%). Marginal relief

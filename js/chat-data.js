@@ -35,9 +35,9 @@ Note: If you are hired through a third-party staffing agency, your eligibility d
     a: `Tax on gratuity (private sector):
 • Government employees: fully exempt — no tax.
 • Private sector: exemption = ₹20,00,000 lifetime ceiling MINUS any gratuity received earlier from any employer.
-• Only the excess (current gratuity minus remaining exemption) is taxable, added to your income and taxed at your marginal slab rate.
+• Only the excess (current gratuity minus remaining exemption) is taxable. It is added ON TOP of your payout-year income, so it is taxed at the higher bracket(s) that (income + excess) reaches — the calculator computes this exactly as tax(income + excess) − tax(income).
 • Your employer deducts tax (TDS) and pays you the balance (in-hand).
-Example: prior gratuity ₹6L, current ₹18L → remaining exemption ₹14L → taxable excess ₹4L. At 30% bracket: tax ₹1.2L, in-hand ₹16.8L.`
+Example: income ₹12L, prior gratuity ₹0, current ₹30L → exempt ₹20L, taxable excess ₹10L → total income ₹22L (25% bracket) → tax = tax(₹22L) − tax(₹12L) = ₹2.5L − ₹0.6L = ₹1.9L, in-hand ₹28.1L.`
   },
   {
     keys: ['prior', 'earlier', 'previously', 'previous', 'before', 'declar'],

@@ -30,14 +30,19 @@ Option-1 exemption model:
 | --- | --- |
 | Exempt available | `max(0, ₹20,00,000 − prior gratuity)` |
 | Taxable excess | `max(0, current gratuity − exempt available)` |
-| Tax on gratuity | `taxable excess × marginal rate` |
+| Tax on gratuity | `tax(income + excess) − tax(income)` (slab-wise, exact) |
 | Surcharge | `tax × surcharge rate` when total income > ₹50,00,000 |
 | Tax + Surcharge | `tax + surcharge` (with marginal relief near thresholds) |
 | In-hand | `current gratuity − tax − surcharge` |
 
 - **Government employees**: fully tax-exempt.
-- The marginal rate is auto-detected from your taxable annual income (New or Old
-  regime) and can be adjusted manually.
+- The taxable excess is added **on top of** your payout-year income, so it is taxed at
+  the bracket(s) reached by `income + excess` — not just the bracket of the income
+  alone. Example: income ₹12,00,000, excess ₹10,00,000 → total ₹22,00,000; the exact
+  incremental tax is `tax(22,00,000) − tax(12,00,000) = ₹2,50,000 − ₹60,000 = ₹1,90,000`
+  (reaching the 25% bracket), not `₹10,00,000 × 15% = ₹1,50,000`.
+- If **income is left at 0**, the manual marginal-rate dropdown is used instead
+  (`excess × rate`) as a fallback estimate.
 - **Surcharge rates** (levied on the income-tax amount when total income — annual
   income plus taxable gratuity excess — crosses a threshold):
 

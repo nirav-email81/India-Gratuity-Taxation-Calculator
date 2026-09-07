@@ -24,8 +24,13 @@ Feature 1 — Taxation:
   lifetime Rs 20,00,000 exemption. Approved model (Option 1):
     exempt = max(0, 20,00,000 - prior)
     excess = max(0, gratuity - exempt)
-    tax = excess x marginal rate
+    tax = income>0 ? tax(income + excess) - tax(income) : excess x manual rate
     in-hand = gratuity - tax
+  The tax on the excess must be computed EXACTLY on the bracket(s) that
+  (income + excess) reaches — never on the income-only bracket (e.g. income 12L +
+  excess 10L = 22L total, so the top bracket is 25% and tax = tax(22L) - tax(12L)
+  = 1.9L, not 10L x 15%). The manual rate dropdown is a fallback only when income
+  is left 0.
 - Surcharge on high incomes (from total income = annual income + taxable gratuity
   excess): >50 lakh = 10%, >1 crore = 15%, >2 crore = 25%, >5 crore = 37% (old
   regime; new regime caps at 25%). Surcharge is a % of the income-tax amount on
