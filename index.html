@@ -299,7 +299,7 @@
           </label>
         </div>
       </div>
-      <div id="govNote" class="info-note hidden">Government employees: your gratuity is <strong>fully tax-exempt</strong>. No tax is deducted.</div>
+      <div id="govNote" class="info-note hidden">Government employees: gratuity uses the <strong>Central CCS formula</strong> — 1/4 of monthly emoluments per completed 6-month period, capped at 16.5 × monthly emoluments — and is <strong>fully tax-exempt</strong>. State rules may vary.</div>
     </div>
 
     <!-- Tax inputs (private only) -->
@@ -609,19 +609,24 @@
       errorEl.style.display = 'none';
 
       // Qualifying years
-      let years, roundingNote;
-      if (empType === 'fixed') {
+      let years, roundingNote, gratuity;
+      if (govt) {
+        const halves = Math.floor(serviceRaw * 2);
+        years = halves / 2;
+        gratuity = Math.round(Math.min(halves * base / 4, 16.5 * base));
+        roundingNote = `Government (Central CCS): gratuity counts completed 6-month periods only (${serviceRaw} yrs → ${years} yrs) = 1/4 of emoluments per period, capped at 16.5 x monthly emoluments (${fmt(Math.min(halves * base / 4, 16.5 * base))}). State rules may vary.`;
+      } else if (empType === 'fixed') {
         years = serviceRaw;
+        gratuity = Math.round((base * 15 * years) / 26);
         roundingNote = `Fixed-term: pro-rata on actual service = ${years} years (no rounding).`;
       } else {
         const frac = serviceRaw - Math.floor(serviceRaw);
         years = frac >= 0.5 ? Math.ceil(serviceRaw) : Math.floor(serviceRaw);
+        gratuity = Math.round((base * 15 * years) / 26);
         roundingNote = serviceRaw !== years
           ? `Permanent: ${serviceRaw} yrs → rounded ${frac >= 0.5 ? 'up' : 'down'} to ${years} year${years !== 1 ? 's' : ''}.`
           : `Permanent: exactly ${years} year${years !== 1 ? 's' : ''} — no rounding.`;
       }
-
-      const gratuity = Math.round((base * 15 * years) / 26);
 
       // Eligibility — flag when tenure is below the qualifying threshold
       const eligWarn = document.getElementById('eligWarning');
@@ -669,12 +674,16 @@
 
       document.getElementById('amount').innerHTML = fmt(gratuity);
 
+      const qualifyingTag = govt ? 'government, completed 6-month periods' : (empType === 'fixed' ? 'fixed-term, pro-rata' : 'permanent');
       let breakdown = `
         <p><strong>Step-by-step calculation:</strong></p>
         <p class="calc-line">Wage base = ${fmt(base)}</p>
-        <p class="calc-line">Qualifying service = ${years} year${years !== 1 ? 's' : ''} (${empType === 'fixed' ? 'fixed-term, pro-rata' : 'permanent'})</p>
-        <p class="calc-line">Formula: ${fmt(base)} × 15 × ${years} ÷ 26</p>
-        <p class="calc-line">= ${fmt(base * 15 * years)} ÷ 26</p>
+        <p class="calc-line">Qualifying service = ${years} year${years !== 1 ? 's' : ''} (${qualifyingTag})</p>
+        ${govt
+          ? `<p class="calc-line">Formula: 1/4 of emoluments per completed 6-month period, capped at 16.5 × monthly emoluments</p>
+        <p class="calc-line">= ${fmt(Math.min(Math.floor(serviceRaw * 2) * base / 4, 16.5 * base))} (cap: ${fmt(16.5 * base)})</p>`
+          : `<p class="calc-line">Formula: ${fmt(base)} × 15 × ${years} ÷ 26</p>
+        <p class="calc-line">= ${fmt(base * 15 * years)} ÷ 26</p>`}
         <p class="calc-line"><strong>= ${fmt(gratuity)}</strong></p>
       `;
       document.getElementById('breakdown').innerHTML = breakdown;
@@ -690,7 +699,7 @@
       const taxNote = document.getElementById('taxNote');
       const surBox = document.getElementById('surchargeBox');
       if (govt) {
-        taxHeadline.textContent = 'Government employee — gratuity fully tax-exempt (₹0 tax).';
+        taxHeadline.textContent = 'Government employee — gratuity (Central CCS formula) fully tax-exempt (₹0 tax).';
         taxTable.innerHTML = '';
         surBox.innerHTML = '';
         taxNote.innerHTML = 'No tax is deducted on gratuity for government employees.';
