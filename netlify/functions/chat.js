@@ -56,32 +56,43 @@ exports.handler = async (event) => {
   const baseUrl = process.env.AI_BASE_URL || DEFAULT_BASE;
   const model = process.env.AI_MODEL || process.env.GITHUB_MODELS_MODEL || DEFAULT_MODEL;
 
-  try {
-    const resp = await fetch(baseUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT + '\n' + context },
-          { role: 'user', content: message }
-        ],
-        max_tokens: 600
-      })
-    });
-
-    if (!resp.ok) {
-      const errText = await resp.text();
-      return {
-        statusCode: resp.status,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Upstream error: ' + errText })
-      };
+  let resp;
+  let proxyErr;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      resp = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT + '\n' + context },
+            { role: 'user', content: message }
+          ],
+          max_tokens: 400
+        })
+      });
+      if (resp.ok) break;
+      if (resp.status < 500) break; // don't retry 4xx
+    } catch (e) {
+      proxyErr = e;
     }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, 700));
+  }
 
+  if (!resp || !resp.ok) {
+    const errText = resp ? await resp.text() : String(proxyErr && proxyErr.message || proxyErr);
+    return {
+      statusCode: resp ? resp.status : 502,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Upstream error: ' + errText })
+    };
+  }
+
+    try {
     const data = await resp.json();
     const answer = data.choices && data.choices[0] && data.choices[0].message
       ? data.choices[0].message.content
