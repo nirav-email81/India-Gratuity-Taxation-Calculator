@@ -36,7 +36,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 503,
       headers: { ...cors, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'AI service not configured. Set GITHUB_MODELS_TOKEN (or AI_API_KEY / AI_BASE_URL / AI_MODEL) in Netlify environment variables.' })
+      body: JSON.stringify({ error: 'AI service not configured. Set AI_API_KEY (and AI_BASE_URL / AI_MODEL) in Netlify environment variables. See docs/DEPLOY.md.' })
     };
   }
 

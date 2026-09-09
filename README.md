@@ -1,50 +1,71 @@
 # India Gratuity Taxation Calculator
 
-A single-page web app to compute **gratuity** and the **tax on it**, under India's
-updated rules in the **Code on Social Security, 2025** (effective **Nov 21, 2025**).
+A simple, free tool that computes **gratuity** and the **tax on it** under India's
+**Code on Social Security, 2025** (effective **Nov 21, 2025**).
 
-**Live site (GitHub Pages):** https://nirav-email81.github.io/India-Gratuity-Taxation-Calculator/
+No login. No backend. No build step. Just open it in a browser and start calculating.
 
-## Pages
+**Live sites**
+- GitHub Pages (free, works for everyone): https://nirav-email81.github.io/India-Gratuity-Taxation-Calculator/
+- Netlify mirror (adds the AI chat): https://india-gratuity-calculator.netlify.app/
 
-- **`index.html`** — Gratuity + tax calculator (2025 rules)
-- **`learn.html`** — Learn about gratuity: 7 caveats & rules
-- **`chat.html`** — AI gratuity assistant (falls back to a built-in knowledge base)
+## What can you do with it?
 
-## Formula
+| Feature | Where |
+|---|---|
+| Calculate gratuity — permanent or fixed-term, private or government | `index.html` |
+| See the income-tax on the taxable gratuity (slabs, surcharge, marginal relief) | `index.html` |
+| Learn gratuity rules, exemptions and pitfalls | `learn.html` |
+| Ask gratuity questions to a chat assistant (AI, or offline answers) | `chat.html` + floating widget |
+
+## Quick start (run it yourself)
+
+You can run the entire app **without installing anything**:
+
+1. Open `index.html` in any browser — done.
+   The chat still works, answering from a built-in knowledge base.
+2. Prefer a local server? Any of these work:
+   ```bash
+   python -m http.server 8080     # http://localhost:8080
+   npx serve .
+   ```
+3. Or just double-click `index.html` from your file explorer.
+
+## How it works (the important rules)
 
 ```
 Gratuity = (Last Drawn Basic Wages + qualifying allowances) × 15 × Years of Service ÷ 26
 ```
 
-- **26** = working days per month under the rules.
-- **Permanent employees**: 5-year rule (or 4 years + 240 working days in the final
-  year); fractional years round up from 6 months.
-- **Fixed-term employees**: eligible after **1 year**, pro-rata on actual years (no rounding).
+| Rule | Detail |
+|---|---|
+| `26` | Working days per month under the rules |
+| Permanent eligibility | 5 years (or 4 yrs + 240 days in final year); waived for death / permanent disablement |
+| Permanent rounding | Fractional year ≥ 6 months rounds **up**, < 6 months rounds down |
+| Fixed-term eligibility | **1 year**, paid pro-rata (no rounding) |
+| 50% wage rule (CTC mode) | If Basic < 50% of CTC, the gratuity base becomes 50% of CTC |
+| Below threshold | Under 5 years (permanent) or 1 year (fixed-term), the shown number is **reference-only** — not an entitlement |
 
-## Taxation model (private sector)
+**Government employees**: gratuity = one-fourth of monthly emoluments per completed
+6-month period, capped at 16.5× emoluments (Central CCS formula), fully **tax-exempt**.
+
+## How the tax is calculated (private sector)
 
 Option-1 exemption model:
 
-| Value | Formula |
-| --- | --- |
-| Exempt available | `max(0, ₹20,00,000 − prior gratuity)` |
+| Step | Rule |
+|---|---|
+| Exempt available | `max(0, ₹20,00,000 − prior gratuity)` — a lifetime ceiling |
 | Taxable excess | `max(0, current gratuity − exempt available)` |
-| Tax on gratuity | `tax(income + excess) − tax(income)` (slab-wise, exact) |
-| Surcharge | `tax × surcharge rate` when total income > ₹50,00,000 |
-| Tax + Surcharge | `tax + surcharge` (with marginal relief near thresholds) |
+| Tax | `tax(income + excess) − tax(income)` — exact, slab-wise |
+| Surcharge | `tax × rate` when total income > ₹50,00,000 (with marginal relief near thresholds) |
 | In-hand | `current gratuity − tax − surcharge` |
 
-- **Government employees**: fully tax-exempt.
-- The taxable excess is added **on top of** your payout-year income, so it is taxed at
-  the bracket(s) reached by `income + excess` — not just the bracket of the income
-  alone. Example: income ₹12,00,000, excess ₹10,00,000 → total ₹22,00,000; the exact
-  incremental tax is `tax(22,00,000) − tax(12,00,000) = ₹2,50,000 − ₹60,000 = ₹1,90,000`
-  (reaching the 25% bracket), not `₹10,00,000 × 15% = ₹1,50,000`.
-- If **income is left at 0**, the manual marginal-rate dropdown is used instead
-  (`excess × rate`) as a fallback estimate.
-- **Surcharge rates** (levied on the income-tax amount when total income — annual
-  income plus taxable gratuity excess — crosses a threshold):
+The taxable excess is added **on top of** your payout-year income, so it's taxed at
+the bracket(s) reached by `income + excess` — not just the bracket of your income.
+Example: income ₹12L + excess ₹10L → `tax(22L) − tax(12L) = ₹2.5L − ₹0.6L = ₹1.9L`.
+
+**Surcharge rates** (on the income-tax amount, when total income crosses):
 
 | Total income | New regime | Old regime |
 | --- | --- | --- |
@@ -53,11 +74,37 @@ Option-1 exemption model:
 | ₹2,00,00,000 – ₹5,00,00,000 | 25% | 25% |
 | above ₹5,00,00,000 | 25% (capped) | 37% |
 
-- **Marginal relief** is applied automatically near a threshold so income marginally
-  above ₹50 lakh or ₹1 crore is not overtaxed.
-- The calculator is mobile-friendly: tables scroll horizontally on small screens and
-  all cards reflow for phones.
-- The 4% health & education cess is not included (noted on the page).
+Marginal relief is applied automatically near thresholds. The 4% health & education
+cess is **not** included (noted on the page).
+
+## AI assistant
+
+- A floating chat widget on the calculator/learn pages, plus a full-page
+  `chat.html`.
+- The chat first calls the **AI proxy** (`/.netlify/functions/chat`); if that is
+  unavailable (e.g. on GitHub Pages) it **automatically falls back** to a built-in
+  knowledge base — the site never breaks.
+- When AI is active, replies are tagged **"Powered by AI"**.
+- To enable real AI, follow **`docs/DEPLOY.md`** (free Gemini key + Netlify — about
+  10 minutes).
+
+## Project layout
+
+```
+index.html                Calculator + taxation UI (self-contained)
+learn.html                Gratuity guide / caveats
+chat.html                 Full-page assistant
+js/chat-data.js           Rule-based knowledge base (offline fallback)
+js/chat-core.js           Chat engine: AI proxy first, KB fallback
+js/chat-widget.js         Floating chat bubble on index/learn
+js/active-nav.js          URL-based navigation highlighting
+netlify/functions/chat.js AI serverless proxy (optional)
+netlify.toml              Netlify config (publish, functions, build)
+docs/DEPLOY.md            Step-by-step deploy guide (Pages + Netlify AI)
+docs/DESIGN.md            Design document
+docs/INTERVIEW_Q&A.md     Interview Q&A for this project
+prompt.txt                Historical build prompts (log only)
+```
 
 ## Sample test values (gratuity calc)
 
@@ -71,11 +118,8 @@ Option-1 exemption model:
 | 6 | 30,000  | 1.0  | Fixed-term | 17,308    |
 | 7 | 30,000  | 1.8  | Fixed-term | 31,154    |
 
-Manual check (row 1): `65,000 × 15 × 12 ÷ 26 = 1,17,00,000 ÷ 26 = 4,50,000`.
-
-Manual check (row 3): 7.6 yrs rounds up to 8 → `43,000 × 15 × 8 ÷ 26 = 51,60,000 ÷ 26 = 1,98,462` (rounded).
-
-Manual check (row 6): fixed-term pro-rata `30,000 × 15 × 1 ÷ 26 = 17,308` (rounded).
+Checks: `65,000 × 15 × 12 ÷ 26 = ₹4,50,000` · `7.6 yrs → 8 yrs → ₹1,98,462` ·
+fixed-term is pro-rata.
 
 ## Sample test values (taxation)
 
@@ -87,32 +131,19 @@ Manual check (row 6): fixed-term pro-rata `30,000 × 15 × 1 ÷ 26 = 17,308` (ro
 | 32,00,000 | 0        | 20,00,000 | 12,00,000| 30% | 3,60,000 | 28,40,000 |
 | 10,00,000 | 0        | 20,00,000 | 0        | 30% | 0       | 10,00,000 |
 
-## AI assistant
+## Deployment in one line
 
-- `chat.html` + a floating widget on the calculator and learn pages.
-- Tries the GitHub Models proxy (`/.netlify/functions/chat`) if deployed; otherwise
-  falls back to the built-in knowledge base (`js/chat-data.js`).
-- To enable real AI, see **`NETLIFY_DEPLOY.md`** (GitHub Models token + Netlify Function).
+- **GitHub Pages (free, no keys):** push the repo → repo **Settings → Pages →**
+  deploy `main` → `/ (root)`.
+- **Netlify (optional AI chat):** import repo → set `AI_API_KEY`, `AI_BASE_URL`,
+  `AI_MODEL` → deploy.
 
-## Project layout
+Full beginner walkthrough: **`docs/DEPLOY.md`**.
 
-```
-index.html               → calculator + taxation UI (self-contained)
-learn.html               → gratuity guide / caveats
-chat.html                → dedicated assistant page
-js/chat-data.js          → rule-based knowledge base (fallback)
-js/chat-core.js          → proxy-first, knowledge-base-fallback chat engine
-js/chat-widget.js        → floating chat bubble on index/learn
-netlify/functions/chat.js→ GitHub Models serverless proxy (optional)
-netlify.toml             → Netlify config (publish=., functions dir, rate limit)
-NETLIFY_DEPLOY.md        → optional AI deployment guide
-DESIGN.md                → design document
-prompt.txt               → build prompts history
-```
+## Tech stack
 
-## Run locally
-
-Open `index.html` in any browser. No build step. For a server: `python -m http.server 8080`.
+Vanilla HTML/CSS/JS · zero dependencies · no build step · Netlify Functions (optional
+AI proxy) · OpenAI-compatible model API (Gemini).
 
 ## License
 
