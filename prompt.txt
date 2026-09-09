@@ -68,3 +68,44 @@ Feature 4 — Netlify guide, but DO NOT deploy:
 - netlify.toml, .gitignore, NETLIFY_DEPLOY.md. The new project is hosted on
   GitHub Pages, not Netlify. The Netlify function/config is included only as an
   optional, deploy-ready backend for the AI chat.
+
+Post-build refinements:
+- Below-5-years flag: permanent <5 yrs / fixed-term <1 yr shows a reference-only
+  amber banner (#eligWarning); payout can be zero.
+- CTC-research: no statutory gratuity below 5 years; a real monthly "gratuity"
+  salary deduction is unlawful (refundable in full & final as a wrongful salary
+  deduction, not as gratuity) vs a CTC provision (~4.81% basic p.a.) which is not
+  refundable. Added to learn.html caveat c1 and the KB.
+- Field-aware validation (zero allowed for income/prior/DA/allowances; error only
+  for service <= 0 or wage base <= 0).
+- Government CCS formula: 1/4 of monthly emoluments per completed 6-month period,
+  capped at 16.5x emoluments; fully tax-exempt; state rules may vary.
+- Renamed header/titles to "India Gratuity (and applicable Taxation) Calculator";
+  url-driven nav highlighting (js/active-nav.js).
+- Attribution on all pages: Nirav Chhaya + "Developed with the help of opencode
+  (model: big-pickle)".
+
+Feature 5 — AI provider migration (GitHub Models retired):
+- GitHub Models hit github_models_retirement_brownout (410) — endpoint being
+  decommissioned.
+- Made netlify/functions/chat.js provider-agnostic: AI_API_KEY / AI_BASE_URL /
+  AI_MODEL env vars (legacy GITHUB_MODELS_TOKEN fallback kept); model default
+  gpt-5-mini removed in favour of explicit env config.
+- Migrated production to Google Gemini free tier:
+  AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions,
+  AI_MODEL=gemini-3.6-flash (2.0-flash was retired).
+- Front-end tags: source 'github-models' renamed to 'ai' -> "Powered by AI";
+  offline fallback text now "built-in assistant — the AI service is not connected
+  on this deployment."
+- Deployed to Netlify: https://india-gratuity-calculator.netlify.app/ (verified:
+  GET index.html 200, POST /.netlify/functions/chat returns model reply).
+
+Feature 6 — Documentation restructure:
+- README rewritten for beginners (run without installs, plain-language rules/tax,
+  sample values, deploy one-liner).
+- docs/DEPLOY.md: from-scratch guide (GitHub Pages + Netlify AI + troubleshooting +
+  security); merged and replaced NETLIFY_DEPLOY.md.
+- docs/DESIGN.md: moved from root and updated to current architecture
+  (provider-agnostic AI, decision log, govt CCS).
+- docs/INTERVIEW_Q&A.md: new comprehensive interview prep incl. AI deep-dive.
+- chat.js 503 message now references AI_API_KEY and docs/DEPLOY.md.

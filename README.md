@@ -140,6 +140,18 @@ fixed-term is pro-rata.
 
 Full beginner walkthrough: **`docs/DEPLOY.md`**.
 
+## Roadmap / possible improvements
+
+- **Unit tests** for the pure functions (`progressiveTax`, `computeWageBase`,
+  service rounding) — they're deterministic, so a small test harness would lock the
+  sample values in.
+- **Chat eval set** — a curated list of gratuity questions with expected answers, to
+  regression-test the system prompt and model choice.
+- **Streaming replies** (server-sent events) so chat answers appear incrementally.
+- **Answer caching** for repeated common questions (saves model tokens + latency).
+- **Provider failover** — try Gemini → OpenAI → knowledge base automatically.
+- **PWA shell** — offline-capable app + installable icon on mobile.
+
 ## Tech stack
 
 Vanilla HTML/CSS/JS · zero dependencies · no build step · Netlify Functions (optional
