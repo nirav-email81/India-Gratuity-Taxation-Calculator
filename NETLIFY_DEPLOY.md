@@ -3,10 +3,10 @@
 This project is a **static GitHub Pages site**. The calculator, learn page, and the
 built-in rule-based assistant all work with **zero backend and zero API keys**.
 
-The AI chat additionally supports a **GitHub Models** powered assistant. Because a
-model token must never live in the browser, the model call is proxied through a
-**Netlify serverless function** (`netlify/functions/chat.js`, already configured in
-`netlify.toml`).
+The AI chat is powered by an **OpenAI-compatible model API** (currently **Google
+Gemini**, free tier). Because a model token must never live in the browser, the model
+call is proxied through a **Netlify serverless function** (`netlify/functions/chat.js`,
+already configured in `netlify.toml`).
 
 > Without Netlify, the chat gracefully falls back to the built-in knowledge base.
 
@@ -15,11 +15,11 @@ model token must never live in the browser, the model call is proxied through a
 | What | Who bills you | Cost |
 |---|---|---|
 | Function runtime (Netlify) | Netlify credits / included usage | Tiny — a chat message = 1 sub-second invocation |
-| Model tokens (GitHub Models) | GitHub | $0 on the free tier |
+| Model tokens (Gemini API) | Google | Free tier ≈ 1,500 requests/day |
 
 **You do not need to buy credits to deploy.** The free Netlify plan's included
-function usage and the GitHub Models free tier are enough for a personal tool. Netlify
-credits only matter if traffic grows very large. If you later move to Gemini/OpenAI,
+function usage and the Gemini free tier are enough for a personal tool. Netlify
+credits only matter if traffic grows very large. If you later move to paid OpenAI,
 the model bill is pay-as-you-go and cents/month at this scale; that is separate from
 Netlify credits.
 
@@ -31,33 +31,37 @@ Netlify credits.
 
 ## Environment variables
 
-The function is provider-agnostic. Defaults target GitHub Models; override to switch providers with no code change.
+The function is provider-agnostic — it reads OpenAI-compatible settings and works
+with **Gemini**, **OpenAI**, or **GitHub Models** (retired in 2025/2026) with no code
+change.
 
-| Variable | Purpose | Default |
+| Variable | Purpose | Our current value |
 |---|---|---|
-| `GITHUB_MODELS_TOKEN` | GitHub Models PAT (scope: `models`) | — |
-| `GITHUB_MODELS_MODEL` | Model id for GitHub Models | `openai/gpt-5-mini` |
-| `AI_API_KEY` | Generic key (falls back to `GITHUB_MODELS_TOKEN`) | — |
-| `AI_BASE_URL` | OpenAI-compatible endpoint | `https://models.github.ai/inference/chat/completions` |
-| `AI_MODEL` | Model id to request | `openai/gpt-5-mini` |
+| `AI_API_KEY` | API key for the chosen provider | Google AI Studio key |
+| `AI_BASE_URL` | OpenAI-compatible endpoint | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` |
+| `AI_MODEL` | Model id to request | `gemini-3.6-flash` |
+| `GITHUB_MODELS_TOKEN` | *(legacy — GitHub Models is retiring)* | — |
 
-To switch to Gemini or OpenAI later, set `AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL`
-(for Gemini: `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`)
-— no code change.
+Set all three (`AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL`) for the current provider.
+Pointers for other providers:
+- **Gemini**: key from `https://aistudio.google.com/apikey`, base
+  `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`
+- **OpenAI**: key from `https://platform.openai.com/api-keys`, base
+  `https://api.openai.com/v1/chat/completions`, model e.g. `gpt-4.1-nano`
+- **GitHub Models**: *(historical)* base `https://models.github.ai/inference/chat/completions` — being retired
 
-## GitHub Models free tier caveats
+## Gemini free tier caveats
 
-- Free usage is **rate-limited** and intended for **prototyping** — per GitHub's terms it
-  is not for production traffic. Limits are ~15 req/min and **150 req/day** on low-tier
-  models like `gpt-5-mini` (50/day on high-tier; frontier models lower).
-- Daily quota resets at UTC midnight.
-- The chat has a built-in KB fallback, so hitting the quota degrades gracefully.
+- Free tier ≈ **1,500 requests/day** for Flash-class models — plenty for a personal tool.
+- Model names rotate as Google retires versions; when you see a
+  `"...model X is no longer available"` error, update `AI_MODEL` to the latest
+  suggested in the message (e.g. `gemini-3.6-flash`).
+- The chat has a built-in KB fallback, so hitting a limit still yields a useful answer.
 
-## 1. Create a GitHub Models token
+## 1. Get a Gemini API key
 
-1. GitHub → Settings → Developer settings → **Personal access tokens** → generate.
-2. Add the **`models`** scope (also `repo` if you prefer fine-grained).
-3. Copy the token immediately — you won't see it again.
+1. Go to **https://aistudio.google.com/apikey** (free; Google account)
+2. **Create API key** → copy it. Never paste it into the repo or chat.
 
 ## 2. Deploy to Netlify
 
@@ -66,15 +70,16 @@ To switch to Gemini or OpenAI later, set `AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL`
    - Build command: *(empty)*. Publish directory: `.`.
    - `netlify.toml` already sets the functions directory — auto-detected.
 3. Site settings → **Environment variables**:
-   - `GITHUB_MODELS_TOKEN` = the PAT from step 1
-   - `GITHUB_MODELS_MODEL` = `openai/gpt-5-mini` *(optional; default)*
-4. **Deploy**. Netlify auto-builds the functions.
+   - `AI_API_KEY` = key from step 1
+   - `AI_BASE_URL` = `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`
+   - `AI_MODEL` = `gemini-3.6-flash`
+4. **Deploy** (env vars apply on a fresh deploy). Netlify auto-builds the functions.
 
 ## 3. Verify
 
 1. Open the deployed site → Gratuity Assistant → ask a question.
-2. The reply footer will say **"Powered by GitHub Models"** when the proxy is active.
-   Without it (or on GitHub Pages), you'll see the built-in answer.
+2. The reply footer will say **"Powered by AI"** when the proxy is active.
+   Otherwise (or on GitHub Pages without Netlify), you'll see the built-in answer.
 3. Sanity-check: `GET https://<site>.netlify.app/index.html` → 200;
    `POST /.netlify/functions/chat` returns a model answer.
 
@@ -85,8 +90,8 @@ npm install -g netlify-cli
 netlify dev
 ```
 
-`netlify dev` serves the site and runs functions locally. Set the token via `.env`
-(`GITHUB_MODELS_TOKEN=...`) or the Netlify dashboard.
+`netlify dev` serves the site and runs functions locally. Set the key via `.env`
+(`AI_API_KEY=...`) or the Netlify dashboard.
 
 ## Cost control / security
 

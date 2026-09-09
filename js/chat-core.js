@@ -20,7 +20,7 @@ window.ChatAPI = (function () {
       if (res.ok) {
         const data = await res.json();
         if (data && data.response) {
-          return { text: data.response, source: 'github-models' };
+          return { text: data.response, source: 'ai' };
         }
       }
     } catch (e) {
@@ -30,7 +30,7 @@ window.ChatAPI = (function () {
     // 2) Fallback: local rule-based knowledge base.
     const local = window.answerLocal ? window.answerLocal(message) : null;
     if (local) {
-      return { text: local + '\n\n_(answered by the built-in assistant — connect GitHub Models for AI answers.)_', source: 'local' };
+      return { text: local + '\n\n_(answered by the built-in assistant — the AI service is not connected on this deployment.)_', source: 'local' };
     }
 
     return {

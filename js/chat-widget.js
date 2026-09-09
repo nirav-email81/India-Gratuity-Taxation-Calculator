@@ -86,8 +86,8 @@
     try {
       var ans = await window.ChatAPI.ask(q);
       thinking.textContent = ans.text;
-      if (ans.source === 'github-models') {
-        thinking.innerHTML = ans.text + '<small>Powered by GitHub Models</small>';
+      if (ans.source === 'ai') {
+        thinking.innerHTML = ans.text + '<small>Powered by AI</small>';
       }
     } catch (e) {
       thinking.textContent = 'Sorry, something went wrong. Please try again.';
